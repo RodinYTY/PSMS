@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/icon">
+        <file>lock.png</file>
+        <file>usr.png</file>
+    </qresource>
+</RCC>

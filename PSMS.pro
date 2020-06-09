@@ -17,13 +17,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     main.cpp \
-    signin.cpp
+    signin.cpp \
+    signup.cpp
 
 HEADERS += \
-    signin.h
+    signin.h \
+    signup.h
 
 FORMS += \
-    signin.ui
+    signin.ui \
+    signup.ui
 
 TRANSLATIONS += \
     PSMS_zh_CN.ts
@@ -32,3 +35,10 @@ TRANSLATIONS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+DISTFILES += \
+    icon/lock.png \
+    icon/usr.png
+
+RESOURCES += \
+    icon/icon.qrc
