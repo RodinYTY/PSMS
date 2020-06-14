@@ -17,14 +17,17 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     main.cpp \
+    setting.cpp \
     signin.cpp \
     signup.cpp
 
 HEADERS += \
+    setting.h \
     signin.h \
     signup.h
 
 FORMS += \
+    setting.ui \
     signin.ui \
     signup.ui
 

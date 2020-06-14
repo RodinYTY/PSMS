@@ -1,6 +1,4 @@
 #include "signin.h"
-#include "signup.h"
-#include "ui_signin.h"
 
 SignIn::SignIn(QWidget *parent)
     : QMainWindow(parent)
@@ -16,25 +14,29 @@ SignIn::~SignIn()
 
 void SignIn::on_signup_clicked()
 {
-    SignUp* u = new SignUp();
+    u = new SignUp();
     u->setWindowTitle("注册窗口");
     u->show();
 }
 
 void SignIn::on_setting_clicked()
 {
-    QString tempt;
-    bool isOK;
-    tempt = QInputDialog::getText(this, "连接设置", "更改当前连接名" + linkname + "为：", QLineEdit::Normal, "", &isOK);
-    if(tempt.size()){
-        linkname = tempt;
-        QMessageBox msgBox;
-        //msgBox.setIcon(QMessageBox::AcceptRole);
-        msgBox.setText("修改完成");
-        msgBox.addButton("确定", QMessageBox::AcceptRole);
-        msgBox.exec();
-    }
-   else if(isOK){
-       QMessageBox::information(this, "", "连接名不能为空");
-   }
+    s = new Setting();
+    s->setWindowTitle("设置窗口");
+    s->setModal(true);
+    QObject::connect(this,SIGNAL(sendLinkInfo(QString, QString)),s,SLOT(getLinkInfo(QString, QString)));
+    QObject::connect(s,SIGNAL(fixLinkInfo(QString, QString)),this,SLOT(getLinkInfo(QString, QString)));
+    emit sendLinkInfo(linkname, dbname);
+    s->show();
+}
+
+void SignIn::getLinkInfo(QString _linkname, QString _dbname){
+    linkname = _linkname;
+    dbname = _dbname;
+}
+
+void SignIn::on_auto_2_clicked(bool checked)
+{
+    if(checked)
+        ui->rem->setChecked(true);
 }

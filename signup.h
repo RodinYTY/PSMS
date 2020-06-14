@@ -18,7 +18,6 @@ public:
 
 private slots:
     void on_role_currentIndexChanged(int index);
-
     void on_code_textChanged(const QString &arg1);
 
 private:

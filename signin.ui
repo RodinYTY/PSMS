@@ -227,6 +227,12 @@ border: 0px transparent;</string>
           <property name="text">
            <string>记住密码</string>
           </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
          </widget>
         </item>
         <item>
@@ -243,27 +249,13 @@ border: 0px transparent;</string>
          </spacer>
         </item>
         <item>
-         <widget class="QComboBox" name="role">
-          <property name="font">
-           <font>
-            <pointsize>14</pointsize>
-           </font>
+         <widget class="QCheckBox" name="auto_2">
+          <property name="text">
+           <string>自动登录</string>
           </property>
-          <item>
-           <property name="text">
-            <string>学生</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>老师</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>管理员</string>
-           </property>
-          </item>
+          <property name="checked">
+           <bool>false</bool>
+          </property>
          </widget>
         </item>
        </layout>
