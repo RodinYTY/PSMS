@@ -2,5 +2,8 @@
     <qresource prefix="/icon">
         <file>lock.png</file>
         <file>usr.png</file>
+        <file>minus.png</file>
+        <file>plus.png</file>
+        <file>search.png</file>
     </qresource>
 </RCC>
