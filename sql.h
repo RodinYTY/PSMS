@@ -1,0 +1,118 @@
+#ifndef SQL_H
+#define SQL_H
+#include <QString>
+#include <QDebug>
+
+class SQL
+{
+public:
+    SQL();
+
+    //连接数据结构
+    struct Configuration{
+        QString _dbname, _linkname, _port, _usrname, _pwd;
+        int _rem, _auto;
+
+    public:
+        void print(){
+            qDebug() << "数据库名 主机名 端口号 用户名 密码 记住密码 自动登录";
+            qDebug() << _dbname << _linkname << _port << _usrname << _pwd <<_rem << _auto;
+        }
+    };
+
+    QString rootpwd = "yty02036054866";
+
+    //建表
+    QString createTables = "CREATE TABLE IF NOT EXISTS `student`(\
+               `sno` int NOT NULL AUTO_INCREMENT,\
+               `sname` char(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,\
+               `sid` char(18) NOT NULL,\
+               `ssex` smallint NOT NULL,\
+               `sage` smallint NOT NULL,\
+               `sphone` char(11) DEFAULT NULL,\
+               `uname` char(20) DEFAULT NULL,\
+               PRIMARY KEY (`sno`)\
+             );\
+             \
+             CREATE TABLE IF NOT EXISTS `teacher`(\
+               `tno` int NOT NULL AUTO_INCREMENT,\
+               `tname` char(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,\
+               `tid` char(18) NOT NULL,\
+               `tsex` smallint NOT NULL,\
+               `tage` smallint NOT NULL,\
+               `tphone` char(11) DEFAULT NULL,\
+               `tmajor` char(8) DEFAULT NULL,\
+               `uname` char(20) DEFAULT NULL,\
+               PRIMARY KEY (`tno`)\
+             );\
+             \
+             CREATE TABLE IF NOT EXISTS `room`(\
+               `rno` int NOT NULL AUTO_INCREMENT,\
+               `rarea` int DEFAULT NULL,\
+               `rrent` int DEFAULT NULL,\
+               PRIMARY KEY (`rno`)\
+             );\
+             \
+             CREATE TABLE IF NOT EXISTS `course`(\
+               `sno` int NOT NULL,\
+               `tno` int NOT NULL,\
+               `rno` int NOT NULL,\
+               `stime` datetime NOT NULL,\
+               `atime` datetime NOT NULL,\
+               `fee` int NOT NULL,\
+               KEY `sno` (`sno`),\
+               KEY `tno` (`tno`),\
+               KEY `rno` (`rno`),\
+               CONSTRAINT `course_ibfk_1` FOREIGN KEY (`sno`) REFERENCES `student` (`sno`) ON DELETE CASCADE ON UPDATE CASCADE,\
+               CONSTRAINT `course_ibfk_2` FOREIGN KEY (`tno`) REFERENCES `teacher` (`tno`) ON DELETE CASCADE ON UPDATE CASCADE,\
+               CONSTRAINT `course_ibfk_3` FOREIGN KEY (`rno`) REFERENCES `room` (`rno`) ON DELETE CASCADE ON UPDATE CASCADE\
+             );\
+             \
+             CREATE TABLE IF NOT EXISTS `instrument`(\
+               `ino` int NOT NULL AUTO_INCREMENT,\
+               `rno` int NOT NULL,\
+               `imodel` varchar(30) DEFAULT NULL,\
+               `iprice` int DEFAULT NULL,\
+               PRIMARY KEY (`ino`),\
+               KEY `rno` (`rno`),\
+               CONSTRAINT `instrument_ibfk_1` FOREIGN KEY (`rno`) REFERENCES `room` (`rno`) ON DELETE CASCADE ON UPDATE CASCADE\
+             );\
+             \
+             CREATE TABLE IF NOT EXISTS `code` (\
+               `icode` char(6) NOT NULL,\
+               `genDate` date NOT NULL,\
+               PRIMARY KEY (`icode`)\
+             );\
+             \
+             SET GLOBAL log_bin_trust_function_creators = TRUE;\
+             \
+             CREATE FUNCTION genCode ( n INT ) RETURNS VARCHAR ( 1024 ) BEGIN\
+                 DECLARE\
+                     result VARCHAR ( 1024 );\
+                 SELECT\
+                     substring( MD5( RAND( ) ), 1, n ) INTO result;\
+                 RETURN result;\
+             END;";
+
+    //创建学生和老师角色
+    QString createRoles = "CREATE role teachers;\
+            GRANT SELECT, UPDATE ON TABLE\
+                course TO teachers;\
+            GRANT SELECT ON TABLE\
+                student TO teachers;\
+            GRANT SELECT ON TABLE\
+                teacher TO teachers;\
+            GRANT SELECT ON TABLE\
+                room TO teachers;\
+            CREATE role students;\
+            GRANT SELECT ON TABLE\
+                course TO students;\
+            GRANT SELECT ON TABLE\
+                student TO students;\
+            GRANT SELECT ON TABLE\
+                teacher TO students;\
+            GRANT SELECT ON TABLE\
+                room TO students;";
+};
+
+#endif // SQL_H

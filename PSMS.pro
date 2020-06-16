@@ -1,4 +1,6 @@
-QT       += core gui
+QT += \
+    core gui \
+    sql \
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -20,13 +22,15 @@ SOURCES += \
     root.cpp \
     setting.cpp \
     signin.cpp \
-    signup.cpp
+    signup.cpp \
+    sql.cpp
 
 HEADERS += \
     root.h \
     setting.h \
     signin.h \
-    signup.h
+    signup.h \
+    sql.h
 
 FORMS += \
     root.ui \

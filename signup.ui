@@ -90,11 +90,17 @@
            <pointsize>14</pointsize>
           </font>
          </property>
+         <property name="focusPolicy">
+          <enum>Qt::StrongFocus</enum>
+         </property>
          <property name="text">
           <string/>
          </property>
          <property name="placeholderText">
           <string>大于6位字母和数字的组合</string>
+         </property>
+         <property name="clearButtonEnabled">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -134,6 +140,9 @@
          </property>
          <property name="placeholderText">
           <string>不小于6位</string>
+         </property>
+         <property name="clearButtonEnabled">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -197,7 +206,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="pwd1_2">
+        <widget class="QLineEdit" name="name">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -235,7 +244,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="pwd1_5">
+        <widget class="QLineEdit" name="age">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -273,7 +282,12 @@
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="comboBox">
+        <widget class="QComboBox" name="sex">
+         <item>
+          <property name="text">
+           <string/>
+          </property>
+         </item>
          <item>
           <property name="text">
            <string>男</string>
@@ -305,12 +319,12 @@
           </size>
          </property>
          <property name="text">
-          <string>手 机 号 </string>
+          <string>手 机 号* </string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="pwd1_3">
+        <widget class="QLineEdit" name="phone">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -342,7 +356,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="usrname_2">
+        <widget class="QLineEdit" name="id">
          <property name="minimumSize">
           <size>
            <width>0</width>
@@ -359,6 +373,9 @@
          </property>
          <property name="placeholderText">
           <string/>
+         </property>
+         <property name="clearButtonEnabled">
+          <bool>true</bool>
          </property>
         </widget>
        </item>

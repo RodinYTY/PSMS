@@ -212,6 +212,9 @@ border: 0px transparent;</string>
         <property name="text">
          <string>登 录</string>
         </property>
+        <property name="shortcut">
+         <string>Return</string>
+        </property>
        </widget>
       </item>
       <item>
@@ -270,7 +273,10 @@ border: 0px transparent;</string>
            </font>
           </property>
           <property name="text">
-           <string>注册</string>
+           <string>注册(R)</string>
+          </property>
+          <property name="shortcut">
+           <string>R</string>
           </property>
          </widget>
         </item>
@@ -295,7 +301,10 @@ border: 0px transparent;</string>
            </font>
           </property>
           <property name="text">
-           <string>设置</string>
+           <string>设置(S)</string>
+          </property>
+          <property name="shortcut">
+           <string>S</string>
           </property>
          </widget>
         </item>

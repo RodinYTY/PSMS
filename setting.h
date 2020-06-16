@@ -21,12 +21,12 @@ private:
 
 private slots:
     //父窗口传值用
-    void getLinkInfo(QString, QString);
+    void getLinkInfo(QString, QString, QString);
 
     void on_buttonBox_accepted();
 
 signals:
-    void fixLinkInfo(QString, QString);
+    void fixLinkInfo(QString, QString, QString);
 };
 
 #endif // SETTING_H
