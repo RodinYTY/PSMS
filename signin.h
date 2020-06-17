@@ -12,7 +12,6 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QStringList>
-#include <QTimer>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class SignIn; }
@@ -35,6 +34,7 @@ private slots:
     void on_auto_2_clicked(bool checked);
 
     void on_signin_clicked();
+
     void after_view_loaded();
 
 private:
@@ -51,6 +51,7 @@ private:
     QStringList load_from_config();
     void save_to_config(QString, QString, QString, QString, QString, int ,int);
     int link_database(); //-1连接失败，0创表失败，1成功
+    int link_database(QString, QString);//重载，非root连接
 
 signals:
     void sendLinkInfo(QString, QString, QString);

@@ -54,61 +54,134 @@ void SignIn::on_signin_clicked()//登录
     QMessageBox msgBox;
     msgBox.setIcon(QMessageBox::Critical);
     msgBox.addButton("确定", QMessageBox::AcceptRole);
+    int ret = link_database();
     if(ui->usrname->text().isEmpty() || ui->pwd->text().isEmpty()){
         msgBox.setText("输入框不能为空！");
         msgBox.exec();
         return;
     }
-    if(ui->usrname->text().toLower() == "root" && ui->pwd->text() != sql.rootpwd){
-        msgBox.setText("连接MySQL失败！");
-        ui->pwd->clear();
-        msgBox.exec();
-        return;
-    }
-    else{
-
-    }
-    //密码正确
-    switch(link_database()){
-    case -1:
-        msgBox.setText("连接MySQL失败！");
-        msgBox.exec();
-        return;
-    case 0:
-        msgBox.setText("创建数据库失败！");
-        msgBox.exec();
-        return;
-    case 1:
-        if(ui->auto_2->isChecked())
-            config._auto = 1;
-        else
-            config._auto = 0;
-        if(ui->rem->isChecked()){
-            config._rem = 1;
-            save_to_config(config._dbname, config._linkname, config._port, ui->usrname->text(), ui->pwd->text(), config._rem, config._auto);
+    //管理员账号
+    if(ui->usrname->text().toLower() == "root"){
+        if(ui->pwd->text() != sql.rootpwd){
+            msgBox.setText("连接MySQL失败！");
+            ui->pwd->clear();
+            msgBox.exec();
+            return;
         }
         else{
-            config._rem = 0;
-            save_to_config(config._dbname, config._linkname, config._port, ui->usrname->text(), "x", config._rem, config._auto);
-
+            //密码正确
+            switch(ret){
+            case -1:
+                msgBox.setText("连接MySQL失败！");
+                msgBox.exec();
+                return;
+            case 0:
+                msgBox.setText("创建数据库失败！");
+                msgBox.exec();
+                return;
+            case 1:
+                if(ui->auto_2->isChecked())
+                    config._auto = 1;
+                else
+                    config._auto = 0;
+                if(ui->rem->isChecked()){
+                    config._rem = 1;
+                    save_to_config(config._dbname, config._linkname, config._port, ui->usrname->text(), ui->pwd->text(), config._rem, config._auto);
+                }
+                else{
+                    config._rem = 0;
+                    save_to_config(config._dbname, config._linkname, config._port, ui->usrname->text(), "x", config._rem, config._auto);
+                }
+                if(ui->usrname->text().toLower() == "root"){
+                    r = new Root();
+                    r->setWindowTitle("琴行管理系统(root)");
+                    r->setDBLink(db);//将root连接传递过去
+                    this->hide();
+                    r->show();
+                }
+            }
         }
-        if(ui->usrname->text().toLower() == "root"){
-            r = new Root();
-            r->setWindowTitle("琴行管理系统(root)");
-            r->setDBLink(db);//将root连接传递过去
-            this->hide();
-            r->show();
+    }
+    //非root账号
+    else{
+        if(!db.open())
+            return;
+        db.exec("use psms;");
+        QSqlQuery query(db);
+        query.exec(sql.acountInStudent.arg(ui->usrname->text()));
+        query.next();
+        if(query.value(0).toInt() == 1)//学生号
+        {
+            switch(link_database(ui->usrname->text(), ui->pwd->text())){
+            case -1:
+                msgBox.setText("连接MySQL失败！");
+                msgBox.exec();
+                return;
+            case 1:
+                //存信息到配置文件
+                if(ui->auto_2->isChecked())
+                    config._auto = 1;
+                else
+                    config._auto = 0;
+                if(ui->rem->isChecked()){
+                    config._rem = 1;
+                    save_to_config(config._dbname, config._linkname, config._port, ui->usrname->text(), ui->pwd->text(), config._rem, config._auto);
+                }
+                else{
+                    config._rem = 0;
+                    save_to_config(config._dbname, config._linkname, config._port, ui->usrname->text(), "x", config._rem, config._auto);
+                }
+                qDebug() << "学生号";
+                /*----------------*/
+
+                break;
+            }
+        }
+        else//不是学生号
+        {
+            query.exec(sql.acountInTeacher.arg(ui->usrname->text()));
+            query.next();
+            if(query.value(0).toInt() != 1)
+            {
+                msgBox.setText("账号不存在！");
+                msgBox.exec();
+                return;
+            }
+            //老师号
+            switch(link_database(ui->usrname->text(), ui->pwd->text())){
+            case -1:
+                msgBox.setText("连接MySQL失败！");
+                msgBox.exec();
+                return;
+            case 1:
+                //存信息到配置文件
+                if(ui->auto_2->isChecked())
+                    config._auto = 1;
+                else
+                    config._auto = 0;
+                if(ui->rem->isChecked()){
+                    config._rem = 1;
+                    save_to_config(config._dbname, config._linkname, config._port, ui->usrname->text(), ui->pwd->text(), config._rem, config._auto);
+                }
+                else{
+                    config._rem = 0;
+                    save_to_config(config._dbname, config._linkname, config._port, ui->usrname->text(), "x", config._rem, config._auto);
+                }
+                qDebug() << "老师号";
+                /*----------------*/
+
+                break;
+            }
         }
     }
 }
 
 int SignIn::link_database(){
-    /*-------------连接数据库-------------*/
-    QSqlDatabase db;
-    if (QSqlDatabase::contains("QMYSQL"))
-        db = QSqlDatabase::database(config._linkname);
+    /*-------------连接数据库(root)-------------*/
+    if (QSqlDatabase::contains("root_link"))
+        db = QSqlDatabase::database("QMYSQL", "root_link");
     else
-        db = QSqlDatabase::addDatabase("QMYSQL");
+        db = QSqlDatabase::addDatabase("QMYSQL", "root_link");
     db.setHostName(config._linkname);
     db.setPort(config._port.toInt());
     db.setUserName("root");
@@ -120,7 +193,7 @@ int SignIn::link_database(){
         qDebug() << "数据库连接失败";
         return -1;
     }
-    /*-------------创建数据库-------------*/
+    /*---------------创建数据库---------------*/
     QString query = "CREATE DATABASE IF NOT EXISTS " + config._dbname;
     db.exec(query);
     if (db.lastError().isValid())
@@ -132,7 +205,7 @@ int SignIn::link_database(){
     else
         qDebug() << "创建数据库成功";
     //使用数据库
-    query = "USE PSMS";
+    query = "USE PSMS;";
     db.exec(query);
     //建表
     db.exec(sql.createTables);
@@ -144,8 +217,36 @@ int SignIn::link_database(){
     }
     else
         qDebug() << "创建表和函数成功";
+    //使用表
+    query = "USE PSMS";
+    db.exec(query);
     //创建角色
     db.exec(sql.createRoles);
+    return 1;
+}
+
+int SignIn::link_database(QString usrname, QString pwd){
+    QSqlDatabase db;
+    if (QSqlDatabase::contains("non_root_link")) {
+        db = QSqlDatabase::database("non_root_link");
+    }
+    else
+        db = QSqlDatabase::addDatabase("QMYSQL", "non_root_link");
+    /*-------------连接数据库-------------*/
+    db.setHostName(config._linkname);
+    db.setPort(config._port.toInt());
+    db.setUserName(usrname);
+    db.setPassword(pwd);
+    bool ok = db.open();
+    if (ok)
+        qDebug() << "数据库连接成功";
+    else{
+        qDebug() << "数据库连接失败";
+        return -1;
+    }
+    //使用数据库
+    db.close();
+    //非root不用建表
     return 1;
 }
 

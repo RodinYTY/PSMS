@@ -5,6 +5,7 @@
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QSqlError>
+#include <QTimer>
 
 class SQL
 {
@@ -156,6 +157,11 @@ public:
     QString selectCodeOf = "select count(*) from code where icode = \'%1\';";
     //删除邀请码
     QString delectCodeOf = "delete from code where icode = \'%1\';";
+
+    //查找账户名
+    QString acountInStudent = "select count(*) from student where uname=\'%1\';";
+    QString acountInTeacher = "select count(*) from teacher where uname=\'%1\';";
+
 
 
 };

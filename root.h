@@ -2,8 +2,7 @@
 #define ROOT_H
 
 #include <QMainWindow>
-#include <QSqlDatabase>
-#include <QDebug>
+#include <sql.h>
 
 namespace Ui {
 class Root;
@@ -24,7 +23,10 @@ private slots:
     void on_search_btn_student_clicked();
 
     void on_search_btn_course_clicked();
+
     void on_comboBox_currentIndexChanged(int index);
+
+    void after_view_loaded();
 
 private:
     Ui::Root *ui;

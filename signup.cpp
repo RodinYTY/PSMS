@@ -22,8 +22,8 @@ SignUp::SignUp(QWidget *parent) :
     ui->sex->setCurrentIndex(1);
     ui->phone->setText("13826490126");
     ui->id->setText("431202199912060416");
-    ui->role->setCurrentIndex(1);
-    ui->code->setText("7c65da");
+    ui->role->setCurrentIndex(0);
+    ui->code->setText("hsd991");
     ui->major->setCurrentIndex(int(SQL::major_set::guitar + 1));
 
 
@@ -265,14 +265,16 @@ void SignUp::on_signup_clicked()//注册
 
 void SignUp::link_database(QSqlDatabase &db){
     /*---------连接数据库---------*/
-    if (QSqlDatabase::contains("QMYSQL"))
-        db = QSqlDatabase::database(config._linkname);
-    else
-        db = QSqlDatabase::addDatabase("QMYSQL");
-    db.setHostName(config._linkname);
-    db.setPort(config._port.toInt());
-    db.setUserName("root");
-    db.setPassword(sql.rootpwd);
+    if (QSqlDatabase::contains("root_link")){
+        db = QSqlDatabase::database("root_link");
+    }
+    else{
+        db = QSqlDatabase::addDatabase("QMYSQL", "root_link");
+        db.setHostName(config._linkname);
+        db.setPort(config._port.toInt());
+        db.setUserName("root");
+        db.setPassword(sql.rootpwd);
+    }
     bool ok = db.open();
     config.print();
     if (ok)
@@ -295,5 +297,5 @@ void SignUp::closeEvent(QCloseEvent *event){
     /*--------覆写closeEvent，关闭窗口自动断开连接--------*/
     if(0) qDebug() << event;
     db.close();
-    QSqlDatabase::removeDatabase("QMYSQL");
+    //QSqlDatabase::removeDatabase("root_link");
 }

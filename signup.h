@@ -6,7 +6,6 @@
 #include <QRegExp>
 #include <QRegExpValidator>
 #include <QMessageBox>
-#include <QTimer>
 #include <sql.h>
 
 namespace Ui {

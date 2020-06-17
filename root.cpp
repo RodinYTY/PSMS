@@ -8,6 +8,11 @@ Root::Root(QWidget *parent) :
     ui->setupUi(this);
     ui->week->setVisible(false);
     ui->le->setVisible(false);
+    QTimer::singleShot(100, this, SLOT(after_view_loaded())); //页面加载后
+}
+
+void Root::after_view_loaded(){
+    qDebug() << db.open();
 }
 
 Root::~Root()
