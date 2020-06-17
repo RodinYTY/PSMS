@@ -7,6 +7,7 @@
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QTimer>
+#include <QInputDialog>
 
 class SQL
 {
@@ -141,17 +142,13 @@ public:
     QString teacherGranting = "grant teachers to %1@%2;";
 
     //学生：姓名 身份证 性别 年龄 手机号 账户名
-    QString insertIntoStudent = "insert into student\
-            values(\'%1\', \'%2\', \'%3\', \'%4\', \'%5\', \'%6\');";
     QString createTrigger = "CREATE TRIGGER insert_student AFTER INSERT ON `student` FOR EACH ROW\
             BEGIN\
                 DELETE FROM CODE \
                 WHERE\
                     datediff( now( ), genDate ) > 7;\
             END;";
-    //老师：姓名 身份证 性别 年龄 手机号 专业 账户名
-    QString insertIntoTeacher = "insert into teacher\
-            values(\'%1\', \'%2\', \'%3\', %4, \'%5\', \'%6\', \'%7\');";
+
     //带主码
     QString insertIntoStudentWithIndex = "insert into student\
             values(%1, \'%2\', \'%3\', \'%4\', %5, \'%6\', \'%7\');";

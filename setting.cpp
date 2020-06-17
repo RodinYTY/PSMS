@@ -27,7 +27,6 @@ void Setting::on_buttonBox_accepted()
         msgBox.setText("输入框不能为空！");
         msgBox.addButton("确定", QMessageBox::AcceptRole);
         msgBox.exec();
-        this->show();
         return;
     }
     if(!ui->port->text().isEmpty() && !ui->port->text().contains(QRegExp("^\\d+$"))){

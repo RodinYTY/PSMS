@@ -217,10 +217,17 @@ void SignUp::on_signup_clicked()//注册
                 msgBox.exec();
                 return;
             }
+
+            QString state = "select min(tno) + 1 from teacher where tno\
+         in (select tno from teacher x where not exists (select tno from \
+        teacher y where y.tno - x.tno = 1));";
+            query.exec(state);
+            query.next();
+            //待插入的tno
+            int len = query.value(0).toInt();
             // (主码号) 姓名 身份证 性别 年龄 手机号 专业 账户名
-            state = sql.insertIntoTeacherWithIndex.arg("10", info.name, info.id, sex_str, \
+            state = sql.insertIntoTeacherWithIndex.arg(QString::number(len), info.name, info.id, sex_str, \
                                                        QString::number(info.age), info.phone, sql.major_to_chinese(info.major), info.usrname);
-//          state = sql.insertIntoTeacher.arg();
             db.exec(state);
             if (db.lastError().isValid())
             {
@@ -244,10 +251,18 @@ void SignUp::on_signup_clicked()//注册
                 msgBox.exec();
                 return;
             }
+
+            QString state = "select min(sno) + 1 from student where sno\
+         in (select sno from student x where not exists (select sno from \
+        student y where y.sno - x.sno = 1));";
+            QSqlQuery query(db);
+            query.exec(state);
+            query.next();
+            //待插入的tno
+            int len = query.value(0).toInt();
             // (主码号) 姓名 身份证 性别 年龄 手机号 账户名
-            state = sql.insertIntoStudentWithIndex.arg("20", info.name, info.id, sex_str, \
+            state = sql.insertIntoStudentWithIndex.arg(QString::number(len), info.name, info.id, sex_str, \
                                                        QString::number(info.age), info.phone, info.usrname);
-//          state = sql.insertIntoStudent.arg();
             db.exec(state);
             if (db.lastError().isValid())
             {
@@ -268,11 +283,11 @@ void SignUp::on_signup_clicked()//注册
 
 void SignUp::link_database(QSqlDatabase &db){
     /*---------连接数据库---------*/
-    if (QSqlDatabase::contains("root_link")){
-        db = QSqlDatabase::database("root_link");
+    if (QSqlDatabase::contains("root_link1")){
+        db = QSqlDatabase::database("root_link1");
     }
     else{
-        db = QSqlDatabase::addDatabase("QMYSQL", "root_link");
+        db = QSqlDatabase::addDatabase("QMYSQL", "root_link1");
         db.setHostName(config._linkname);
         db.setPort(config._port.toInt());
         db.setUserName("root");
@@ -300,5 +315,5 @@ void SignUp::closeEvent(QCloseEvent *event){
     /*--------覆写closeEvent，关闭窗口自动断开连接--------*/
     if(0) qDebug() << event;
     db.close();
-    //QSqlDatabase::removeDatabase("root_link");
+    //QSqlDatabase::removeDatabase("root_link1");
 }

@@ -21,7 +21,7 @@ public:
     void setConfig(struct SQL::Configuration);
 
 private slots:
-    void on_comboBox_currentIndexChanged(int index);
+    void on_ccomb_currentIndexChanged(int index);
 
     void after_view_loaded();
 
@@ -45,13 +45,32 @@ private slots:
 
     void on_add_instr_clicked();
 
+    void on_add_room_clicked();
+
+    void on_delete_room_clicked();
+
+    void on_submit_teacher_clicked();
+
+    void on_revert_teacher_clicked();
+
+    void on_minus_teacher_clicked();
+
+    void on_search_teacher_clicked();
+
+    void on_submit_student_clicked();
+
+    void on_revert_student_clicked();
+
+    void on_minus_student_clicked();
+
+    void on_search_student_clicked();
+
 private:
     SQL sql;
     Ui::Root *ui;
     QSqlDatabase db;
     SQL::Configuration config;
-    QSqlTableModel *model;
-    QSqlTableModel *model_course, *model_room, *model_teacher, *model_student;
+    QSqlTableModel *model, *model_t, *model_s, *model_c;
     void load_tables_to_tv();
 };
 

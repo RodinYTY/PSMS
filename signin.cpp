@@ -54,12 +54,13 @@ void SignIn::on_signin_clicked()//登录
     QMessageBox msgBox;
     msgBox.setIcon(QMessageBox::Critical);
     msgBox.addButton("确定", QMessageBox::AcceptRole);
-    int ret = link_database();
+
     if(ui->usrname->text().isEmpty() || ui->pwd->text().isEmpty()){
         msgBox.setText("输入框不能为空！");
         msgBox.exec();
         return;
     }
+    int ret = link_database();
     //管理员账号
     if(ui->usrname->text().toLower() == "root"){
         if(ui->pwd->text() != sql.rootpwd){
@@ -94,7 +95,7 @@ void SignIn::on_signin_clicked()//登录
                 }
                 if(ui->usrname->text().toLower() == "root"){
                     r = new Root();
-                    r->setWindowTitle("琴行管理系统(root)");
+                    r->setWindowTitle("琴行管理系统[root]");
                     //将root和config连接传递过去
                     r->setDBLink(db);
                     r->setConfig(config);
@@ -179,7 +180,7 @@ void SignIn::on_signin_clicked()//登录
 }
 
 int SignIn::link_database(){
-    /*-------------连接数据库(root)-------------*/
+    /*-------------连接数据库[root]-------------*/
     if (QSqlDatabase::contains("root_link"))
         db = QSqlDatabase::database("QMYSQL", "root_link");
     else
@@ -202,6 +203,11 @@ int SignIn::link_database(){
     {
         qDebug() <<db.lastError();
         qDebug() << "创建数据库失败";
+        if(db.lastError().isValid()){
+            QMessageBox::warning(this, tr(""),
+                                 tr("数据库语句错误: %1")
+                                 .arg(db.lastError().text()));
+        }
         return 0;
     }
     else
@@ -215,6 +221,11 @@ int SignIn::link_database(){
     {
         qDebug() <<db.lastError();
         qDebug() << "创建表和函数失败";
+        if(db.lastError().isValid()){
+            QMessageBox::warning(this, tr(""),
+                                 tr("数据库语句错误: %1")
+                                 .arg(db.lastError().text()));
+        }
         return 0;
     }
     else
