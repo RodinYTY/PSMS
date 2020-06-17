@@ -8,8 +8,6 @@
 #include "sql.h"
 #include <QMainWindow>
 #include <QMessageBox>
-#include <QSqlDatabase>
-#include <QSqlError>
 #include <QSqlQuery>
 #include <QFile>
 #include <QFileInfo>

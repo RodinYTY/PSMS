@@ -13,6 +13,20 @@ SignUp::SignUp(QWidget *parent) :
     //首先连接数据库，失败则退出
     QTimer::singleShot(100, this, SLOT(after_view_loaded())); //页面加载后
     setConstraints();
+    /*------调试用------*/
+    ui->usrname->setText("yutianyue126");
+    ui->pwd->setText("123456");
+    ui->pwd1->setText("123456");
+    ui->name->setText("余天越");
+    ui->age->setText("20");
+    ui->sex->setCurrentIndex(1);
+    ui->phone->setText("13826490126");
+    ui->id->setText("431202199912060416");
+    ui->role->setCurrentIndex(1);
+    ui->code->setText("7c65da");
+    ui->major->setCurrentIndex(int(SQL::major_set::guitar + 1));
+
+
 }
 
 void SignUp::after_view_loaded(){
@@ -84,7 +98,7 @@ void SignUp::on_code_textChanged(const QString &arg1)
         ui->code->setText(arg1.left(CODE_MAX_LEN));
 }
 
-void SignUp::on_signup_clicked()
+void SignUp::on_signup_clicked()//注册
 {
     QMessageBox msgBox;
     msgBox.setIcon(QMessageBox::Critical);
@@ -168,10 +182,81 @@ void SignUp::on_signup_clicked()
             return;
         }
     }
+    struct SQL::UserInfo info = {ui->usrname->text(), ui->pwd->text(), ui->name->text(), ui->phone->text(), ui->id->text(), ui->code->text(),\
+                                ui->age->text().toInt(), ui->sex->currentIndex()-1, ui->role->currentIndex(), SQL::major_set(ui->major->currentIndex()-1)};
+    /*---------新建用户---------*/
+    QString state;
+    if(db.open()){
+        db.exec("use " + config._dbname);
+        /*---------老师号---------*/
+        if(info.isTeacher){
+            db.exec(sql.clearCodes);//清理过期邀请码
+            //查询邀请码
+            state = sql.selectCodeOf.arg(info.code);
+            QSqlQuery query;
+            query.exec(state);
+            query.next();
+            if(query.value(0).toInt() == 0)//不包含该邀请码
+            {
+                msgBox.setText("邀请码无效！");
+                msgBox.exec();
+                return;
+            }
+            state = sql.createUser.arg(info.usrname, config._linkname, info.pwd);
+            state += sql.teacherGranting.arg(info.usrname, config._linkname);
+            db.exec(state);
+            if (db.lastError().isValid())
+            {
+                qDebug() <<db.lastError();
+                msgBox.setText("用户名已存在！");
+                msgBox.exec();
+                return;
+            }
+            // (主码号) 姓名 身份证 性别 年龄 手机号 专业 账户名
+            state = sql.insertIntoTeacherWithIndex.arg("10", info.name, info.id, QString::number(info.sex), \
+                                                       QString::number(info.age), info.phone, sql.major_to_chinese(info.major), info.usrname);
+//          state = sql.insertIntoTeacher.arg();
+            db.exec(state);
+            if (db.lastError().isValid())
+            {
+                qDebug() <<db.lastError();
+                msgBox.setText("数据插入失败，请重新检查资料格式！");
+                msgBox.exec();
+                return;
+            }
+            //注册成功，删除邀请码
+            db.exec(sql.delectCodeOf.arg(info.code));
+        }
+        /*---------学生号---------*/
+        else{
+            state = sql.createUser.arg(info.usrname, config._linkname, info.pwd);
+            state += sql.studentGranting.arg(info.usrname, config._linkname);
+            db.exec(state);
+            if (db.lastError().isValid())
+            {
+                qDebug() <<db.lastError();
+                msgBox.setText("用户名已存在！");
+                msgBox.exec();
+                return;
+            }
+            // (主码号) 姓名 身份证 性别 年龄 手机号 账户名
+            state = sql.insertIntoStudentWithIndex.arg("20", info.name, info.id, QString::number(info.sex), \
+                                                       QString::number(info.age), info.phone, info.usrname);
+//          state = sql.insertIntoStudent.arg();
+            db.exec(state);
+            if (db.lastError().isValid())
+            {
+                qDebug() <<db.lastError();
+                msgBox.setText("数据插入失败，请重新检查资料格式！");
+                msgBox.exec();
+                return;
+            }
+        }
 
 
 
 
+    }
     QMessageBox msgBox1;
     msgBox1.setText("注册成功！");
     msgBox1.exec();

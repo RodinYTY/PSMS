@@ -2,11 +2,15 @@
 #define SQL_H
 #include <QString>
 #include <QDebug>
+#include <QSqlDatabase>
+#include <QSqlQuery>
+#include <QSqlError>
 
 class SQL
 {
 public:
     SQL();
+
 
     //连接数据结构
     struct Configuration{
@@ -20,7 +24,22 @@ public:
         }
     };
 
-    QString rootpwd = "yty02036054866";
+    enum major_set{
+        piano,violin,guitar,drum,bass,guzheng,ukulele
+    };
+
+    struct UserInfo{
+        QString usrname, pwd, name, phone, id, code;
+        int age, sex, isTeacher;
+        major_set major;
+    };//注册信息
+
+    /*-----------方法-----------*/
+    QString major_to_chinese(major_set);
+
+    /*-------------------------*/
+
+    const QString rootpwd = "yty02036054866";
 
     //建表
     QString createTables = "CREATE TABLE IF NOT EXISTS `student`(\
@@ -113,6 +132,32 @@ public:
                 teacher TO students;\
             GRANT SELECT ON TABLE\
                 room TO students;";
+
+    //创建用户
+    QString createUser = "create user %1@%2 identified by \'%3\';";
+    QString studentGranting = "grant students to %1@%2;";
+    QString teacherGranting = "grant teachers to %1@%2;";
+
+    //姓名 身份证 性别 年龄 手机号 账户名
+    QString insertIntoStudent = "insert into student\
+            values(\'%1\', \'%2\', %3, %4, \'%5\', \'%6\');";
+    //姓名 身份证 性别 年龄 手机号 专业 账户名
+    QString insertIntoTeacher = "insert into teacher\
+            values(\'%1\', \'%2\', %3, %4, \'%5\', \'%6\', \'%7\');";
+    //带主码
+    QString insertIntoStudentWithIndex = "insert into student\
+            values(%1, \'%2\', \'%3\', %4, %5, \'%6\', \'%7\');";
+    QString insertIntoTeacherWithIndex = "insert into teacher\
+            values(%1, \'%2\', \'%3\', %4, %5, \'%6\', \'%7\', \'%8\');";
+
+    //清除7天前的邀请码
+    QString clearCodes = "DELETE FROM CODE WHERE datediff( now( ), genDate ) > 7;";
+    //查询邀请码
+    QString selectCodeOf = "select count(*) from code where icode = \'%1\';";
+    //删除邀请码
+    QString delectCodeOf = "delete from code where icode = \'%1\';";
+
+
 };
 
 #endif // SQL_H

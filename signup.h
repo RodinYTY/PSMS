@@ -2,7 +2,6 @@
 #define SIGNUP_H
 
 #include <QWidget>
-#include <QSqlDatabase>
 #include <QDebug>
 #include <QRegExp>
 #include <QRegExpValidator>
@@ -14,9 +13,6 @@ namespace Ui {
 class SignUp;
 }
 
-enum major_set{
-    piano,violin,guitar,drum,bass,guzheng,ukulele
-};
 
 class SignUp : public QWidget
 {
@@ -45,7 +41,6 @@ protected:
 private:
     Ui::SignUp *ui;
     QSqlDatabase db;
-    major_set major;
     SQL sql;
     void setConstraints();
     struct SQL::Configuration config;
