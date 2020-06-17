@@ -3,6 +3,7 @@
 #include <QString>
 #include <QDebug>
 #include <QSqlDatabase>
+#include <QMessageBox>
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QTimer>
@@ -47,7 +48,7 @@ public:
                `sno` int NOT NULL AUTO_INCREMENT,\
                `sname` char(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,\
                `sid` char(18) NOT NULL,\
-               `ssex` smallint NOT NULL,\
+               `ssex` char(1) NOT NULL,\
                `sage` smallint NOT NULL,\
                `sphone` char(11) DEFAULT NULL,\
                `uname` char(20) DEFAULT NULL,\
@@ -58,7 +59,7 @@ public:
                `tno` int NOT NULL AUTO_INCREMENT,\
                `tname` char(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,\
                `tid` char(18) NOT NULL,\
-               `tsex` smallint NOT NULL,\
+               `tsex` char(1) NOT NULL,\
                `tage` smallint NOT NULL,\
                `tphone` char(11) DEFAULT NULL,\
                `tmajor` char(8) DEFAULT NULL,\
@@ -139,17 +140,23 @@ public:
     QString studentGranting = "grant students to %1@%2;";
     QString teacherGranting = "grant teachers to %1@%2;";
 
-    //姓名 身份证 性别 年龄 手机号 账户名
+    //学生：姓名 身份证 性别 年龄 手机号 账户名
     QString insertIntoStudent = "insert into student\
-            values(\'%1\', \'%2\', %3, %4, \'%5\', \'%6\');";
-    //姓名 身份证 性别 年龄 手机号 专业 账户名
+            values(\'%1\', \'%2\', \'%3\', \'%4\', \'%5\', \'%6\');";
+    QString createTrigger = "CREATE TRIGGER insert_student AFTER INSERT ON `student` FOR EACH ROW\
+            BEGIN\
+                DELETE FROM CODE \
+                WHERE\
+                    datediff( now( ), genDate ) > 7;\
+            END;";
+    //老师：姓名 身份证 性别 年龄 手机号 专业 账户名
     QString insertIntoTeacher = "insert into teacher\
-            values(\'%1\', \'%2\', %3, %4, \'%5\', \'%6\', \'%7\');";
+            values(\'%1\', \'%2\', \'%3\', %4, \'%5\', \'%6\', \'%7\');";
     //带主码
     QString insertIntoStudentWithIndex = "insert into student\
-            values(%1, \'%2\', \'%3\', %4, %5, \'%6\', \'%7\');";
+            values(%1, \'%2\', \'%3\', \'%4\', %5, \'%6\', \'%7\');";
     QString insertIntoTeacherWithIndex = "insert into teacher\
-            values(%1, \'%2\', \'%3\', %4, %5, \'%6\', \'%7\', \'%8\');";
+            values(%1, \'%2\', \'%3\', \'%4\', %5, \'%6\', \'%7\', \'%8\');";
 
     //清除7天前的邀请码
     QString clearCodes = "DELETE FROM CODE WHERE datediff( now( ), genDate ) > 7;";
@@ -157,6 +164,8 @@ public:
     QString selectCodeOf = "select count(*) from code where icode = \'%1\';";
     //删除邀请码
     QString delectCodeOf = "delete from code where icode = \'%1\';";
+    //插入邀请码
+    QString insertCodeOf = "insert into code values (\'%1\', now());";
 
     //查找账户名
     QString acountInStudent = "select count(*) from student where uname=\'%1\';";

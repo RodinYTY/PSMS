@@ -5,7 +5,6 @@
 #include <QDebug>
 #include <QRegExp>
 #include <QRegExpValidator>
-#include <QMessageBox>
 #include <sql.h>
 
 namespace Ui {

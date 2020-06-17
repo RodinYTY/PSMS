@@ -95,7 +95,9 @@ void SignIn::on_signin_clicked()//登录
                 if(ui->usrname->text().toLower() == "root"){
                     r = new Root();
                     r->setWindowTitle("琴行管理系统(root)");
-                    r->setDBLink(db);//将root连接传递过去
+                    //将root和config连接传递过去
+                    r->setDBLink(db);
+                    r->setConfig(config);
                     this->hide();
                     r->show();
                 }
@@ -106,7 +108,7 @@ void SignIn::on_signin_clicked()//登录
     else{
         if(!db.open())
             return;
-        db.exec("use psms;");
+        db.exec("USE " + config._dbname);
         QSqlQuery query(db);
         query.exec(sql.acountInStudent.arg(ui->usrname->text()));
         query.next();
@@ -205,7 +207,7 @@ int SignIn::link_database(){
     else
         qDebug() << "创建数据库成功";
     //使用数据库
-    query = "USE PSMS;";
+    query = "USE " + config._dbname;
     db.exec(query);
     //建表
     db.exec(sql.createTables);
@@ -218,10 +220,12 @@ int SignIn::link_database(){
     else
         qDebug() << "创建表和函数成功";
     //使用表
-    query = "USE PSMS";
+    query = "USE " + config._dbname;
     db.exec(query);
     //创建角色
     db.exec(sql.createRoles);
+    //插入触发器，插入学生自动删除过期邀请码
+    db.exec(sql.createTrigger);
     return 1;
 }
 

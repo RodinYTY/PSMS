@@ -2,10 +2,5 @@
     <qresource prefix="/icon">
         <file>lock.png</file>
         <file>usr.png</file>
-        <file>minus.png</file>
-        <file>plus.png</file>
-        <file>search.png</file>
-        <file>plus_grey.png</file>
-        <file>search_pressed.png</file>
     </qresource>
 </RCC>

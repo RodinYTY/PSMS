@@ -188,12 +188,17 @@ void SignUp::on_signup_clicked()//注册
     QString state;
     if(db.open()){
         db.exec("use " + config._dbname);
+        QString sex_str;
+        if(info.sex == 0)
+            sex_str = "男";
+        else
+            sex_str = "女";
         /*---------老师号---------*/
         if(info.isTeacher){
             db.exec(sql.clearCodes);//清理过期邀请码
             //查询邀请码
             state = sql.selectCodeOf.arg(info.code);
-            QSqlQuery query;
+            QSqlQuery query(db);
             query.exec(state);
             query.next();
             if(query.value(0).toInt() == 0)//不包含该邀请码
@@ -213,7 +218,7 @@ void SignUp::on_signup_clicked()//注册
                 return;
             }
             // (主码号) 姓名 身份证 性别 年龄 手机号 专业 账户名
-            state = sql.insertIntoTeacherWithIndex.arg("10", info.name, info.id, QString::number(info.sex), \
+            state = sql.insertIntoTeacherWithIndex.arg("10", info.name, info.id, sex_str, \
                                                        QString::number(info.age), info.phone, sql.major_to_chinese(info.major), info.usrname);
 //          state = sql.insertIntoTeacher.arg();
             db.exec(state);
@@ -240,7 +245,7 @@ void SignUp::on_signup_clicked()//注册
                 return;
             }
             // (主码号) 姓名 身份证 性别 年龄 手机号 账户名
-            state = sql.insertIntoStudentWithIndex.arg("20", info.name, info.id, QString::number(info.sex), \
+            state = sql.insertIntoStudentWithIndex.arg("20", info.name, info.id, sex_str, \
                                                        QString::number(info.age), info.phone, info.usrname);
 //          state = sql.insertIntoStudent.arg();
             db.exec(state);
@@ -252,8 +257,6 @@ void SignUp::on_signup_clicked()//注册
                 return;
             }
         }
-
-
 
 
     }

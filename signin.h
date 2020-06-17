@@ -7,7 +7,6 @@
 #include "root.h"
 #include "sql.h"
 #include <QMainWindow>
-#include <QMessageBox>
 #include <QSqlQuery>
 #include <QFile>
 #include <QFileInfo>
