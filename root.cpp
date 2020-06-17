@@ -220,5 +220,27 @@ void Root::on_revert_room_clicked()
 
 void Root::on_minus_instr_clicked()
 {
+    int curRow = ui->tv_room->currentIndex().row();
+    //获取选中的行
+    model->removeRow(curRow);
+    //删除该行
+    int ok = QMessageBox::warning(this,tr("该操作不能撤回！"), tr("确定删除当前乐器吗？"),
+                         QMessageBox::Yes,QMessageBox::No);
+    if(ok == QMessageBox::No)
+    {
+       model->revertAll(); //如果不删除，则撤销
+    }
+    else model->submitAll(); //否则提交，在数据库中删除该行
+}
 
+void Root::on_add_instr_clicked()
+{
+
+    QSqlRecord record = model->record();//获取空记录行
+    int row = model->rowCount(); //获取当前的行号
+
+    model->insertRecord(row,record);  //  插入行
+    model->setData(model->index(row, 1), ui->rid->currentText());
+    qDebug() << model->columnCount();
+    qDebug() << model->rowCount();
 }

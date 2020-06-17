@@ -552,6 +552,9 @@
               <property name="text">
                <string>修改</string>
               </property>
+              <property name="shortcut">
+               <string>Return</string>
+              </property>
              </widget>
             </item>
            </layout>
@@ -560,6 +563,9 @@
            <widget class="QTableView" name="tv_room">
             <property name="autoFillBackground">
              <bool>true</bool>
+            </property>
+            <property name="selectionBehavior">
+             <enum>QAbstractItemView::SelectRows</enum>
             </property>
             <attribute name="horizontalHeaderCascadingSectionResizes">
              <bool>false</bool>

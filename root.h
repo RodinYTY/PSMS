@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QSqlTableModel>
+#include <QSqlRecord>
 #include <sql.h>
 
 namespace Ui {
@@ -41,6 +42,8 @@ private slots:
     void on_revert_room_clicked();
 
     void on_minus_instr_clicked();
+
+    void on_add_instr_clicked();
 
 private:
     SQL sql;
