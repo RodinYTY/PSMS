@@ -77,11 +77,11 @@ void Root::load_tables_to_tv(){
             QString state;
             if(sql.isDigitStr(ui->le_course->text())){
                 model_c->setFilter(sql.searchStudent.arg(ui->le_course->text()));
-                qDebug() << sql.searchStudent.arg(ui->le_course->text());
+//                qDebug() << sql.searchStudent.arg(ui->le_course->text());
             }
             else{
                 model_c->setFilter(QString("sno in (select sno from student where sname like \'%%1%\' or uname like \'%%1%\')").arg(ui->le_course->text()));
-                qDebug() << QString("sno in (select sno from student where sname like \'%%1%\' or uname like \'%%1%\')").arg(ui->le_course->text());
+//                qDebug() << QString("sno in (select sno from student where sname like \'%%1%\' or uname like \'%%1%\')").arg(ui->le_course->text());
             }
         }
         break;

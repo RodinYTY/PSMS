@@ -23,20 +23,26 @@ SOURCES += \
     setting.cpp \
     signin.cpp \
     signup.cpp \
-    sql.cpp
+    sql.cpp \
+    student.cpp \
+    teacher.cpp
 
 HEADERS += \
     root.h \
     setting.h \
     signin.h \
     signup.h \
-    sql.h
+    sql.h \
+    student.h \
+    teacher.h
 
 FORMS += \
     root.ui \
     setting.ui \
     signin.ui \
-    signup.ui
+    signup.ui \
+    student.ui \
+    teacher.ui
 
 TRANSLATIONS += \
     PSMS_zh_CN.ts

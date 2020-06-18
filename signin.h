@@ -6,6 +6,8 @@
 #include "setting.h"
 #include "root.h"
 #include "sql.h"
+#include "student.h"
+#include "teacher.h"
 #include <QMainWindow>
 #include <QSqlQuery>
 #include <QFile>
@@ -38,11 +40,13 @@ private slots:
 
 private:
     void init_database();
-    QSqlDatabase db; //数据库命令执行接口
+    QSqlDatabase db, db1; //数据库命令执行接口
     Ui::SignIn *ui;
     SignUp *u;
     Root *r;
     Setting *s;
+    Student *stu;
+    Teacher *t;
     SQL sql;
 
     struct SQL::Configuration config = {"psms", "localhost", "3306", QString("x"), QString("x"), 0, 0};

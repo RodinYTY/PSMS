@@ -146,7 +146,7 @@ public:
             CREATE role students;\
             GRANT SELECT ON TABLE\
                 course TO students;\
-            GRANT SELECT ON TABLE\
+            GRANT SELECT, UPDATE ON TABLE\
                 student TO students;\
             GRANT SELECT ON TABLE\
                 teacher TO students;\

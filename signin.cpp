@@ -1,4 +1,4 @@
-#include "signin.h"
+﻿#include "signin.h"
 
 SignIn::SignIn(QWidget *parent)
     : QMainWindow(parent)
@@ -136,7 +136,11 @@ void SignIn::on_signin_clicked()//登录
                 }
                 qDebug() << "学生号";
                 /*----------------*/
-
+                stu = new Student();
+                stu->setDBLinkandUname(db1, ui->usrname->text());
+                stu->setWindowTitle("琴行管理系统[学生]");
+                stu->show();
+                this->hide();
                 break;
             }
         }
@@ -172,7 +176,11 @@ void SignIn::on_signin_clicked()//登录
                 }
                 qDebug() << "老师号";
                 /*----------------*/
-
+                t = new Teacher();
+                t->setDBLinkandUname(db1, ui->usrname->text());
+                t->setWindowTitle("琴行管理系统[教师]");
+                t->show();
+                this->hide();
                 break;
             }
         }
@@ -219,7 +227,7 @@ int SignIn::link_database(){
     db.exec(sql.createTables);
     if (db.lastError().isValid())
     {
-        qDebug() <<db.lastError();
+        qDebug() << db.lastError();
         qDebug() << "创建表和函数失败";
         if(db.lastError().isValid()){
             QMessageBox::warning(this, tr(""),
@@ -241,26 +249,23 @@ int SignIn::link_database(){
 }
 
 int SignIn::link_database(QString usrname, QString pwd){
-    QSqlDatabase db;
     if (QSqlDatabase::contains("non_root_link")) {
-        db = QSqlDatabase::database("non_root_link");
+        db1 = QSqlDatabase::database("non_root_link");
     }
     else
-        db = QSqlDatabase::addDatabase("QMYSQL", "non_root_link");
+        db1 = QSqlDatabase::addDatabase("QMYSQL", "non_root_link");
     /*-------------连接数据库-------------*/
-    db.setHostName(config._linkname);
-    db.setPort(config._port.toInt());
-    db.setUserName(usrname);
-    db.setPassword(pwd);
-    bool ok = db.open();
+    db1.setHostName(config._linkname);
+    db1.setPort(config._port.toInt());
+    db1.setUserName(usrname);
+    db1.setPassword(pwd);
+    bool ok = db1.open();
     if (ok)
         qDebug() << "数据库连接成功";
     else{
         qDebug() << "数据库连接失败";
         return -1;
     }
-    //使用数据库
-    db.close();
     //非root不用建表
     return 1;
 }
