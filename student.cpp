@@ -206,10 +206,30 @@ void Student::updateTableView(){
     ui->tableView->setModel(model);
     ui->tableView->hideColumn(0);
     ui->tableView->hideColumn(5);
+
+    //替换老师号为姓名
+    QString content;
+    QAbstractItemModel *abstract_model;
+    QModelIndex index;
+    for(int r = 0; r < model->rowCount(); r++){
+        abstract_model = ui->tableView->model();
+        index = abstract_model->index(r, 1);
+        content = model->data(index).toString();
+        model->setData(model->index(r, 1), tname_from_tno(content));
+    }
 }
 
 void Student::on_comboBox_currentIndexChanged(int index)
 {
     if(0) index = 0;
     updateTableView();
+}
+
+QString Student::tname_from_tno(QString tno){
+    QSqlQuery query(db);
+    db.exec("USE " + config._dbname);
+    query.exec(QString("select tname from teacher where tno = %1;").arg(tno));
+    query.next();
+    qDebug() << query.value(0).toString();
+    return query.value(0).toString();
 }

@@ -38,6 +38,7 @@ private:
     QSqlTableModel *model;
     void updateInfo();
     void updateTableView();
+    QString sname_from_sno(QString);
 
 };
 

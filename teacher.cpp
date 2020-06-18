@@ -251,28 +251,51 @@ void Teacher::updateTableView(){
     ui->tableView->setModel(model);
     ui->tableView->hideColumn(1);
     ui->tableView->hideColumn(5);
+
+    //替换学号为姓名
+    QString content;
+    QAbstractItemModel *abstract_model;
+    QModelIndex index;
+    for(int r = 0; r < model->rowCount(); r++){
+        abstract_model = ui->tableView->model();
+        index = abstract_model->index(r, 0);
+        content = model->data(index).toString();
+        model->setData(model->index(r, 0), sname_from_sno(content));
+    }
 }
 
 void Teacher::on_delete_2_clicked()
 {
     int curRow = ui->tableView->currentIndex().row();
     //获取选中的行
-    model->removeRow(curRow);
+
     //删除该行
     int ok = QMessageBox::information(this,tr(""), tr("确定课程结束了吗？"),
                          QMessageBox::Yes,QMessageBox::No);
     if(ok == QMessageBox::No)
     {
-       model->revertAll();
+       //model->revertAll();
     }
     else{
+        model->revertAll();
+        model->removeRow(curRow);
         model->submitAll();
         statusBar()->showMessage(tr("移除成功"),2000);
     }
+    updateTableView();
 }
 
 void Teacher::on_comboBox_currentIndexChanged(int index)
 {
     if(0) index = 0;
     updateTableView();
+}
+
+QString Teacher::sname_from_sno(QString sno){
+    QSqlQuery query(db);
+    db.exec("USE " + config._dbname);
+    query.exec(QString("select sname from student where sno = %1;").arg(sno));
+    query.next();
+    qDebug() << query.value(0).toString();
+    return query.value(0).toString();
 }

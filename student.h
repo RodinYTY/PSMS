@@ -36,6 +36,8 @@ private:
     QSqlTableModel *model;
     void updateInfo();
     void updateTableView();
+    QString tname_from_tno(QString tno);
+
 };
 
 #endif // STUDENT_H
