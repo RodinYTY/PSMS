@@ -71,9 +71,10 @@ void SignIn::on_signin_clicked()//登录
     if(ui->usrname->text().toLower() == "root"){
         if(ui->pwd->text() != sql.rootpwd){
             msgBox.setText("root的密码不正确！");
+            ui->auto_2->setChecked(false);
             ui->pwd->clear();
             msgBox.exec();
-            return;
+
         }
         else{
             //密码正确
@@ -81,10 +82,12 @@ void SignIn::on_signin_clicked()//登录
             case -1:
                 msgBox.setText("连接MySQL(root)失败！");
                 msgBox.exec();
+                ui->auto_2->setChecked(false);
                 return;
             case 0:
                 msgBox.setText("创建数据库失败！");
                 msgBox.exec();
+                ui->auto_2->setChecked(false);
                 return;
             case 1:
                 if(ui->auto_2->isChecked())
@@ -116,6 +119,7 @@ void SignIn::on_signin_clicked()//登录
         if(!db.open()){
             msgBox.setText("数据库连接断开！");
             msgBox.exec();
+            ui->auto_2->setChecked(false);
             return;
         }
         db.exec("USE " + config._dbname);
@@ -129,6 +133,7 @@ void SignIn::on_signin_clicked()//登录
                 msgBox.setText("连接MySQL失败！\n请检查数据库配置或登录账号");
                 msgBox.exec();
                 db1.close();
+                ui->auto_2->setChecked(false);
                 return;
             case 1:
                 //存信息到配置文件
@@ -164,6 +169,7 @@ void SignIn::on_signin_clicked()//登录
             {
                 msgBox.setText("账号不存在！");
                 msgBox.exec();
+                ui->auto_2->setChecked(false);
                 return;
             }
             //老师号
@@ -171,6 +177,7 @@ void SignIn::on_signin_clicked()//登录
             case -1:
                 msgBox.setText("连接MySQL失败！\n请检查数据库配置或登录账号");
                 msgBox.exec();
+                ui->auto_2->setChecked(false);
                 return;
             case 1:
                 //存信息到配置文件

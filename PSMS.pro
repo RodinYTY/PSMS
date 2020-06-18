@@ -52,9 +52,15 @@ qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
-DISTFILES +=
+DISTFILES += \
+    icon/lock.png \
+    icon/usr.png
 
 RESOURCES += \
     icon/icon.qrc
+
+macx {
+    ICON = icon/Icon.icns
+}
 
 DEFINES += QT_NO_WARNING_OUTPUT\ QT_NO_DEBUG_OUTPUT
