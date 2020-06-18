@@ -12,6 +12,10 @@ void SignIn::after_view_loaded(){
     init_database();
 }
 
+void SignIn::redisplay(){
+    this->show();
+}
+
 SignIn::~SignIn()
 {
     delete ui;
@@ -100,6 +104,7 @@ void SignIn::on_signin_clicked()//登录
                 //将root和config连接传递过去
                 r->setDBLink(db);
                 r->setConfig(config);
+                connect(r, SIGNAL(windowsClosed()), this, SLOT(redisplay()));
                 this->hide();
                 r->show();
             }
@@ -145,6 +150,7 @@ void SignIn::on_signin_clicked()//登录
                 stu->setDBLinkandUname(db, ui->usrname->text());
                 stu->setConfig(config);
                 stu->setWindowTitle("琴行管理系统[学生]");
+                connect(stu, SIGNAL(windowsClosed()), this, SLOT(redisplay()));
                 stu->show();
                 this->hide();
                 break;
@@ -186,6 +192,7 @@ void SignIn::on_signin_clicked()//登录
                 t->setDBLinkandUname(db, ui->usrname->text());
                 t->setConfig(config);
                 t->setWindowTitle("琴行管理系统[教师]");
+                connect(t, SIGNAL(windowsClosed()), this, SLOT(redisplay()));
                 t->show();
                 this->hide();
                 break;

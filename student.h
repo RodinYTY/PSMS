@@ -27,6 +27,8 @@ private slots:
 
     void on_comboBox_currentIndexChanged(int index);
 
+    void gohome();
+
 private:
     Ui::Student *ui;
     QSqlDatabase db;
@@ -38,6 +40,8 @@ private:
     void updateTableView();
     QString tname_from_tno(QString tno);
 
+signals:
+    void windowsClosed();
 };
 
 #endif // STUDENT_H

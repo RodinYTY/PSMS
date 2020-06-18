@@ -32,6 +32,8 @@ private slots:
     //接受子窗口传值用
     void getLinkInfo(QString, QString, QString);
 
+    void redisplay();
+
     void on_auto_2_clicked(bool checked);
 
     void on_signin_clicked();

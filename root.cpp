@@ -17,8 +17,10 @@ Root::Root(QWidget *parent) :
     ui->tv_student->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tv_course->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     //ui->tv_room->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);//均分行
-
     QTimer::singleShot(100, this, SLOT(after_view_loaded())); //页面加载后
+
+    connect(ui->gohome, SIGNAL(triggered()), this, SLOT(gohome()));
+
 }
 
 void Root::after_view_loaded(){
@@ -652,4 +654,9 @@ void Root::on_minus_course_clicked()
 void Root::on_search_course_clicked()
 {
     load_tables_to_tv();
+}
+
+void Root::gohome(){
+    emit windowsClosed();
+    this->close();
 }

@@ -527,8 +527,20 @@
      <height>22</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>数据库</string>
+    </property>
+    <addaction name="gohome"/>
+   </widget>
+   <addaction name="menu"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="gohome">
+   <property name="text">
+    <string>🏚</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

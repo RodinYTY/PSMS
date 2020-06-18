@@ -26,6 +26,8 @@ Teacher::Teacher(QWidget *parent) :
     ui->le_id->setValidator(validator4);
     ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     ui->tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);//不可选中
+
+    connect(ui->gohome, SIGNAL(triggered()), this, SLOT(gohome()));
 }
 
 void Teacher::after_view_loaded(){
@@ -296,6 +298,10 @@ QString Teacher::sname_from_sno(QString sno){
     db.exec("USE " + config._dbname);
     query.exec(QString("select sname from student where sno = %1;").arg(sno));
     query.next();
-    qDebug() << query.value(0).toString();
     return query.value(0).toString();
+}
+
+void Teacher::gohome(){
+    emit windowsClosed();
+    this->close();
 }

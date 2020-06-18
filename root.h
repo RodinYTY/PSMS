@@ -74,6 +74,8 @@ private slots:
 
     void on_search_course_clicked();
 
+    void gohome();
+
 private:
     SQL sql;
     Ui::Root *ui;
@@ -81,6 +83,9 @@ private:
     SQL::Configuration config;
     QSqlTableModel *model, *model_t, *model_s, *model_c;
     void load_tables_to_tv();
+
+signals:
+    void windowsClosed();
 };
 
 #endif // ROOT_H

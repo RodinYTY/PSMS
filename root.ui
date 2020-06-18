@@ -33,7 +33,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <property name="elideMode">
        <enum>Qt::ElideRight</enum>
@@ -1020,8 +1020,25 @@
      <height>22</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>数据库</string>
+    </property>
+    <addaction name="gohome"/>
+   </widget>
+   <addaction name="menu"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionhome">
+   <property name="text">
+    <string>home</string>
+   </property>
+  </action>
+  <action name="gohome">
+   <property name="text">
+    <string>🏚</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>
