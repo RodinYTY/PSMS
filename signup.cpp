@@ -14,17 +14,17 @@ SignUp::SignUp(QWidget *parent) :
     QTimer::singleShot(100, this, SLOT(after_view_loaded())); //页面加载后
     setConstraints();
     /*------调试用------*/
-    ui->usrname->setText("yutianyue126");
-    ui->pwd->setText("123456");
-    ui->pwd1->setText("123456");
-    ui->name->setText("余天越");
-    ui->age->setText("20");
-    ui->sex->setCurrentIndex(1);
-    ui->phone->setText("13826490126");
-    ui->id->setText("431202199912060416");
-    ui->role->setCurrentIndex(0);
-    ui->code->setText("hsd991");
-    ui->major->setCurrentIndex(int(SQL::major_set::guitar + 1));
+//    ui->usrname->setText("yutianyue126");
+//    ui->pwd->setText("123456");
+//    ui->pwd1->setText("123456");
+//    ui->name->setText("余天越");
+//    ui->age->setText("20");
+//    ui->sex->setCurrentIndex(1);
+//    ui->phone->setText("13826490126");
+//    ui->id->setText("431202199912060416");
+//    ui->role->setCurrentIndex(0);
+//    ui->code->setText("hsd991");
+//    ui->major->setCurrentIndex(int(SQL::major_set::guitar + 1));
 
 
 }
