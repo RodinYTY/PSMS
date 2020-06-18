@@ -18,6 +18,7 @@ SignIn::~SignIn()
 }
 
 void SignIn::init_database(){
+    QSqlDatabase db;
     QStringList strList = load_from_config();
     if(strList.length() == 0)
         qDebug() << "配置文件不存在";
@@ -51,6 +52,7 @@ void SignIn::init_database(){
 
 void SignIn::on_signin_clicked()//登录
 {
+    QSqlDatabase db;
     QMessageBox msgBox;
     msgBox.setIcon(QMessageBox::Critical);
     msgBox.addButton("确定", QMessageBox::AcceptRole);
@@ -60,11 +62,11 @@ void SignIn::on_signin_clicked()//登录
         msgBox.exec();
         return;
     }
-    int ret = link_database();
+    int ret = link_database(db);
     //管理员账号
     if(ui->usrname->text().toLower() == "root"){
         if(ui->pwd->text() != sql.rootpwd){
-            msgBox.setText("连接MySQL失败！");
+            msgBox.setText("root的密码不正确！");
             ui->pwd->clear();
             msgBox.exec();
             return;
@@ -73,7 +75,7 @@ void SignIn::on_signin_clicked()//登录
             //密码正确
             switch(ret){
             case -1:
-                msgBox.setText("连接MySQL失败！");
+                msgBox.setText("连接MySQL(root)失败！");
                 msgBox.exec();
                 return;
             case 0:
@@ -93,32 +95,35 @@ void SignIn::on_signin_clicked()//登录
                     config._rem = 0;
                     save_to_config(config._dbname, config._linkname, config._port, ui->usrname->text(), "x", config._rem, config._auto);
                 }
-                if(ui->usrname->text().toLower() == "root"){
-                    r = new Root();
-                    r->setWindowTitle("琴行管理系统[root]");
-                    //将root和config连接传递过去
-                    r->setDBLink(db);
-                    r->setConfig(config);
-                    this->hide();
-                    r->show();
-                }
+                r = new Root();
+                r->setWindowTitle("琴行管理系统[root]");
+                //将root和config连接传递过去
+                r->setDBLink(db);
+                r->setConfig(config);
+                this->hide();
+                r->show();
             }
         }
     }
     //非root账号
     else{
-        if(!db.open())
+        QSqlDatabase db1;
+        if(!db.open()){
+            msgBox.setText("数据库连接断开！");
+            msgBox.exec();
             return;
+        }
         db.exec("USE " + config._dbname);
         QSqlQuery query(db);
         query.exec(sql.acountInStudent.arg(ui->usrname->text()));
         query.next();
         if(query.value(0).toInt() == 1)//学生号
         {
-            switch(link_database(ui->usrname->text(), ui->pwd->text())){
+            switch(link_database(db1, ui->usrname->text(), ui->pwd->text())){
             case -1:
-                msgBox.setText("连接MySQL失败！");
+                msgBox.setText("连接MySQL失败！\n请检查数据库配置或登录账号");
                 msgBox.exec();
+                db1.close();
                 return;
             case 1:
                 //存信息到配置文件
@@ -137,7 +142,8 @@ void SignIn::on_signin_clicked()//登录
                 qDebug() << "学生号";
                 /*----------------*/
                 stu = new Student();
-                stu->setDBLinkandUname(db1, ui->usrname->text());
+                stu->setDBLinkandUname(db, ui->usrname->text());
+                stu->setConfig(config);
                 stu->setWindowTitle("琴行管理系统[学生]");
                 stu->show();
                 this->hide();
@@ -155,9 +161,9 @@ void SignIn::on_signin_clicked()//登录
                 return;
             }
             //老师号
-            switch(link_database(ui->usrname->text(), ui->pwd->text())){
+            switch(link_database(db1, ui->usrname->text(), ui->pwd->text())){
             case -1:
-                msgBox.setText("连接MySQL失败！");
+                msgBox.setText("连接MySQL失败！\n请检查数据库配置或登录账号");
                 msgBox.exec();
                 return;
             case 1:
@@ -177,7 +183,8 @@ void SignIn::on_signin_clicked()//登录
                 qDebug() << "老师号";
                 /*----------------*/
                 t = new Teacher();
-                t->setDBLinkandUname(db1, ui->usrname->text());
+                t->setDBLinkandUname(db, ui->usrname->text());
+                t->setConfig(config);
                 t->setWindowTitle("琴行管理系统[教师]");
                 t->show();
                 this->hide();
@@ -187,9 +194,9 @@ void SignIn::on_signin_clicked()//登录
     }
 }
 
-int SignIn::link_database(){
+int SignIn::link_database(QSqlDatabase &db){
     /*-------------连接数据库[root]-------------*/
-    if (QSqlDatabase::contains("root_link"))
+    if (QSqlDatabase::contains("root_link") && db.open())
         db = QSqlDatabase::database("QMYSQL", "root_link");
     else
         db = QSqlDatabase::addDatabase("QMYSQL", "root_link");
@@ -248,7 +255,7 @@ int SignIn::link_database(){
     return 1;
 }
 
-int SignIn::link_database(QString usrname, QString pwd){
+int SignIn::link_database(QSqlDatabase &db1, QString usrname, QString pwd){
     if (QSqlDatabase::contains("non_root_link")) {
         db1 = QSqlDatabase::database("non_root_link");
     }
@@ -256,6 +263,7 @@ int SignIn::link_database(QString usrname, QString pwd){
         db1 = QSqlDatabase::addDatabase("QMYSQL", "non_root_link");
     /*-------------连接数据库-------------*/
     db1.setHostName(config._linkname);
+    //db1.setDatabaseName(config._dbname);
     db1.setPort(config._port.toInt());
     db1.setUserName(usrname);
     db1.setPassword(pwd);
@@ -263,6 +271,7 @@ int SignIn::link_database(QString usrname, QString pwd){
     if (ok)
         qDebug() << "数据库连接成功";
     else{
+        qDebug() << db1.lastError().text();
         qDebug() << "数据库连接失败";
         return -1;
     }

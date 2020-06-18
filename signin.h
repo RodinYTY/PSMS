@@ -40,7 +40,7 @@ private slots:
 
 private:
     void init_database();
-    QSqlDatabase db, db1; //数据库命令执行接口
+
     Ui::SignIn *ui;
     SignUp *u;
     Root *r;
@@ -53,8 +53,8 @@ private:
 
     QStringList load_from_config();
     void save_to_config(QString, QString, QString, QString, QString, int ,int);
-    int link_database(); //-1连接失败，0创表失败，1成功
-    int link_database(QString, QString);//重载，非root连接
+    int link_database(QSqlDatabase &); //-1连接失败，0创表失败，1成功
+    int link_database(QSqlDatabase &, QString, QString);//重载，非root连接
 
 signals:
     void sendLinkInfo(QString, QString, QString);

@@ -15,12 +15,25 @@ class Student : public QMainWindow
 public:
     explicit Student(QWidget *parent = nullptr);
     ~Student();
+    void setConfig(struct SQL::Configuration);
     void setDBLinkandUname(QSqlDatabase, QString);
+
+private slots:
+    void on_cancel_clicked();
+
+    void on_save_clicked();
+
+    void after_view_loaded();
 
 private:
     Ui::Student *ui;
     QSqlDatabase db;
     QString usrname;
+    QStringList oldInfo;
+    SQL::Configuration config;
+    QSqlTableModel *model;
+    void updateInfo();
+    void updateTableView();
 };
 
 #endif // STUDENT_H

@@ -2,7 +2,6 @@
 #define ROOT_H
 
 #include <QMainWindow>
-#include <QSqlTableModel>
 #include <QSqlRecord>
 #include <sql.h>
 

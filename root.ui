@@ -33,7 +33,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>2</number>
       </property>
       <property name="elideMode">
        <enum>Qt::ElideRight</enum>
@@ -435,7 +435,7 @@
                <string>搜索</string>
               </property>
               <property name="shortcut">
-               <string>Return</string>
+               <string>Ctrl+F</string>
               </property>
              </widget>
             </item>

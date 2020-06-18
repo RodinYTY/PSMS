@@ -8,6 +8,8 @@
 #include <QSqlError>
 #include <QTimer>
 #include <QInputDialog>
+#include <QSqlTableModel>
+
 
 class SQL
 {
