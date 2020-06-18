@@ -65,6 +65,16 @@ private slots:
 
     void on_search_student_clicked();
 
+    void on_submit_course_clicked();
+
+    void on_revert_course_clicked();
+
+    void on_plus_course_clicked();
+
+    void on_minus_course_clicked();
+
+    void on_search_course_clicked();
+
 private:
     SQL sql;
     Ui::Root *ui;

@@ -21,13 +21,75 @@ Root::Root(QWidget *parent) :
     QTimer::singleShot(100, this, SLOT(after_view_loaded())); //页面加载后
 }
 
+void Root::after_view_loaded(){
+    //加载rno到comb上
+    QSqlQuery query(db);
+    db.exec("USE " + config._dbname);
+    //生成琴房号的combox item
+    query.exec("select rno from room;");
+    QString room_id;
+    while(query.next()){
+        room_id = query.value(0).toString();
+        ui->rid->addItem(room_id);
+        ui->rid_c->addItem(room_id);
+    }
+    load_tables_to_tv();
+
+}
+
 void Root::load_tables_to_tv(){
+    //刷新表显示
     ui->fix->setEnabled(false);
     /*----------------课程----------------*/
     model_c = new QSqlTableModel(this, db);
-    model_c->setTable("course, student");
+    model_c->setTable("course");
     model_c->setEditStrategy(QSqlTableModel::OnManualSubmit);
-    model_c->setFilter("course.sno = student.sno");
+    //设置filter
+    switch(ui->ccomb->currentIndex()){
+    case 0://date: mon day
+        if(ui->mon->currentIndex()!=0 && ui->day->currentIndex()==0){//某一月
+            model_c->setFilter(QString("month(stime) = %1").arg(ui->mon->currentIndex()));
+        }
+        else if(ui->mon->currentIndex()==0 && ui->day->currentIndex()!=0){//某一天
+            model_c->setFilter(QString("day(stime) = %1").arg(ui->day->currentIndex()));
+        }
+        else if(ui->mon->currentIndex()!=0 && ui->day->currentIndex()!=0){//具体一天
+            model_c->setFilter(QString("month(stime) = %1 and day(stime) = %2").\
+                               arg(QString::number(ui->mon->currentIndex()), QString::number(ui->day->currentIndex())));
+        }
+        break;
+    case 1://weekday: week
+        model_c->setFilter(QString("weekday(stime) = %1").arg(ui->week->currentIndex()));
+        break;
+    case 2://teacher: le_course
+        if(!ui->le_course->text().isEmpty()){
+            QString state;
+            if(sql.isDigitStr(ui->le_course->text())){
+                model_c->setFilter(sql.searchTeacher.arg(ui->le_course->text()));
+            }
+            else{
+                model_c->setFilter(QString("tno in (select tno from teacher where tname like \'%%1%\' or uname like \'%%1%\')").arg(ui->le_course->text()));
+            }
+        }
+        break;
+    case 3://student: le_course
+        if(!ui->le_course->text().isEmpty()){
+            QString state;
+            if(sql.isDigitStr(ui->le_course->text())){
+                model_c->setFilter(sql.searchStudent.arg(ui->le_course->text()));
+                qDebug() << sql.searchStudent.arg(ui->le_course->text());
+            }
+            else{
+                model_c->setFilter(QString("sno in (select sno from student where sname like \'%%1%\' or uname like \'%%1%\')").arg(ui->le_course->text()));
+                qDebug() << QString("sno in (select sno from student where sname like \'%%1%\' or uname like \'%%1%\')").arg(ui->le_course->text());
+            }
+        }
+        break;
+    case 4://room: rid_c
+        model_c->setFilter(QString("rno = %1").arg(ui->rid_c->currentText()));
+        break;
+    }
+
     model_c->select();
     model_c->setHeaderData(0, Qt::Horizontal, tr("学生号"));
     model_c->setHeaderData(1, Qt::Horizontal, tr("老师号"));
@@ -36,7 +98,6 @@ void Root::load_tables_to_tv(){
     model_c->setHeaderData(4, Qt::Horizontal, tr("结束时间"));
     model_c->setHeaderData(5, Qt::Horizontal, tr("费用"));
     ui->tv_course->setModel(model_c);
-
 
 
     /*----------------琴房----------------*/
@@ -133,20 +194,6 @@ void Root::load_tables_to_tv(){
     }
     ui->tv_student->setModel(model_s);
     ui->tv_student->hideColumn(0);
-}
-
-void Root::after_view_loaded(){
-    QSqlQuery query(db);
-    db.exec("USE " + config._dbname);
-    //生成琴房号的combox item
-    query.exec("select rno from room;");
-    QString room_id;
-    while(query.next()){
-        room_id = query.value(0).toString();
-        ui->rid->addItem(room_id);
-    }
-    load_tables_to_tv();
-
 }
 
 Root::~Root()
@@ -269,7 +316,7 @@ void Root::on_fix_clicked()//修改房间信息
         qDebug() <<db.lastError();
         qDebug() << "area修改失败";
         if(db.lastError().isValid()){
-            QMessageBox::warning(this, tr("room"),
+            QMessageBox::warning(this, tr("room表"),
                                  tr("数据库错误: %1")
                                  .arg(db.lastError().text()));
         }
@@ -284,7 +331,7 @@ void Root::on_fix_clicked()//修改房间信息
         qDebug() <<db.lastError();
         qDebug() << "rent修改失败";
         if(db.lastError().isValid()){
-            QMessageBox::warning(this, tr("room"),
+            QMessageBox::warning(this, tr("room表"),
                                  tr("数据库错误: %1")
                                  .arg(db.lastError().text()));
         }
@@ -304,7 +351,7 @@ void Root::on_submit_room_clicked()
         model->database().commit(); //提交
     } else {
         model->database().rollback(); //回滚
-        QMessageBox::warning(this, tr(""), "room",
+        QMessageBox::warning(this, tr(""), "room表",
                              tr("数据库错误: %1")
                              .arg(model->lastError().text()));
         return;
@@ -330,8 +377,10 @@ void Root::on_minus_instr_clicked()
     {
        model->revertAll(); //如果不删除，则撤销
     }
-    else model->submitAll(); //否则提交，在数据库中删除该行
-    statusBar()->showMessage(tr("移除成功"),2000);
+    else{
+        model->submitAll(); //否则提交，在数据库中删除该行
+        statusBar()->showMessage(tr("移除成功"),2000);
+    }
 }
 
 void Root::on_add_instr_clicked()
@@ -378,7 +427,7 @@ room y where y.rno - x.rno = 1));";
     state = state.arg(QString::number(len), new_area, new_rent);
     db.exec(state);
     if(db.lastError().isValid()){
-        QMessageBox::warning(this, tr("room"),
+        QMessageBox::warning(this, tr("room表"),
                              tr("数据库错误: %1")
                              .arg(db.lastError().text()));
         return;
@@ -394,7 +443,7 @@ void Root::on_delete_room_clicked()
     state = state.arg(ui->rid->currentText());
     db.exec(state);
     if(db.lastError().isValid()){
-        QMessageBox::warning(this, tr("room"),
+        QMessageBox::warning(this, tr("room表"),
                              tr("数据库错误: %1")
                              .arg(db.lastError().text()));
         return;
@@ -425,7 +474,7 @@ void Root::on_submit_teacher_clicked()
         model_t->database().commit(); //提交
     } else {
         model_t->database().rollback(); //回滚
-        QMessageBox::warning(this, tr(""), "teacher",
+        QMessageBox::warning(this, tr(""), "teacher表",
                              tr("数据库错误: %1")
                              .arg(model_t->lastError().text()));
         return;
@@ -492,7 +541,7 @@ void Root::on_submit_student_clicked()
         model_s->database().commit(); //提交
     } else {
         model_s->database().rollback(); //回滚
-        QMessageBox::warning(this, tr(""), "student",
+        QMessageBox::warning(this, tr(""), "student表",
                              tr("数据库错误: %1")
                              .arg(model_s->lastError().text()));
         return;
@@ -548,6 +597,59 @@ void Root::on_minus_student_clicked()
 }
 
 void Root::on_search_student_clicked()
+{
+    load_tables_to_tv();
+}
+
+void Root::on_submit_course_clicked()
+{
+    model_c->database().transaction(); //开始事务操作
+    if (model_c->submitAll()) {
+        model_c->database().commit(); //提交
+    } else {
+        model_c->database().rollback(); //回滚
+        QMessageBox::warning(this, tr(""), "course表",
+                             tr("数据库错误: %1")
+                             .arg(model_c->lastError().text()));
+        return;
+    }
+    statusBar()->showMessage(tr("提交成功"),2000);
+}
+
+void Root::on_revert_course_clicked()
+{
+    model_c->revertAll();
+    statusBar()->showMessage(tr("撤销成功"),2000);
+}
+
+void Root::on_plus_course_clicked()
+{
+    QSqlRecord record = model_c->record();//获取空记录行
+    int row = model_c->rowCount(); //获取当前的行号
+
+    model_c->insertRecord(row,record);  //  插入行
+    model_c->setData(model->index(row, 1), ui->rid->currentText());
+}
+
+void Root::on_minus_course_clicked()
+{
+    int curRow = ui->tv_course->currentIndex().row();
+    //获取选中的行
+    model_c->removeRow(curRow);
+    //删除该行
+    int ok = QMessageBox::warning(this,tr(""), tr("确定删除当前课程吗？\n该操作不能撤回！"),
+                         QMessageBox::Yes,QMessageBox::No);
+    if(ok == QMessageBox::No)
+    {
+       model_c->revertAll();
+    }
+    else{
+        model_c->submitAll();
+        statusBar()->showMessage(tr("移除成功"),2000);
+    }
+}
+
+void Root::on_search_course_clicked()
 {
     load_tables_to_tv();
 }

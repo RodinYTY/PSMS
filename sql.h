@@ -40,6 +40,23 @@ public:
     /*-----------方法-----------*/
     QString major_to_chinese(major_set);
 
+    int isDigitStr(QString src)
+    {
+        QByteArray ba = src.toLatin1();//QString 转换为 char*
+         const char *s = ba.data();
+
+        while(*s && *s>='0' && *s<='9') s++;
+
+        if (*s)
+        { //不是纯数字
+            return 0;
+        }
+        else
+        { //纯数字
+            return 1;
+        }
+    }
+
     /*-------------------------*/
 
     const QString rootpwd = "yty02036054866";
@@ -167,6 +184,9 @@ public:
     //查找账户名
     QString acountInStudent = "select count(*) from student where uname=\'%1\';";
     QString acountInTeacher = "select count(*) from teacher where uname=\'%1\';";
+
+    QString searchTeacher = "tno = %1 or tno in (select tno from teacher where tid like \'%%1%\' or tphone like \'%%1%\' or uname like \'%%1%\')";
+    QString searchStudent = "sno = %1 or sno in (select sno from student where sid like \'%%1%\' or sphone like \'%%1%\' or uname like \'%%1%\')";
 
 
 
