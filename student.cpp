@@ -180,10 +180,22 @@ void Student::on_save_clicked()
 
 void Student::updateTableView(){
     QSqlQuery query(db);
-    int comboindex = ui->comboBox->currentIndex();
     model = new QSqlTableModel(this, db);
     model->setTable("course");
-    model->setFilter(QString("sno in (select sno from student where uname = \'%1\')").arg(usrname));//只能看本人的
+    QString state1 = QString("sno in (select sno from student where uname = \'%1\')").arg(usrname), state2;
+    model->setFilter(state1);//只能看本人的
+    state2 = "datediff(stime, now()) <= %1";
+    switch(ui->comboBox->currentIndex()){
+    case 1://今天
+        model->setFilter(state1 + " and " + state2.arg(0));
+        break;
+    case 2://本周
+        model->setFilter(state1 + " and " + state2.arg(7));
+        break;
+    case 3://本月
+        model->setFilter(state1 + " and " + state2.arg(30));
+        break;
+    }
     model->setEditStrategy(QSqlTableModel::OnManualSubmit);
     model->select();
     model->setHeaderData(1, Qt::Horizontal, tr("老师"));
@@ -194,4 +206,10 @@ void Student::updateTableView(){
     ui->tableView->setModel(model);
     ui->tableView->hideColumn(0);
     ui->tableView->hideColumn(5);
+}
+
+void Student::on_comboBox_currentIndexChanged(int index)
+{
+    if(0) index = 0;
+    updateTableView();
 }

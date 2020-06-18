@@ -223,10 +223,24 @@ void Teacher::on_save_clicked()
 
 void Teacher::updateTableView(){
     QSqlQuery query(db);
-    int comboindex = ui->comboBox->currentIndex();
     model = new QSqlTableModel(this, db);
     model->setTable("course");
-    model->setFilter(QString("tno in (select tno from teacher where uname = \'%1\')").arg(usrname));//只能看本人的
+    QString state1, state2;
+    state1 = QString("tno in (select tno from teacher where uname = \'%1\')").arg(usrname);
+    model->setFilter(state1);//只能看本人的
+    state2 = "datediff(stime, now()) <= %1";
+    switch(ui->comboBox->currentIndex()){
+    case 1://今天
+        model->setFilter(state1 + " and " + state2.arg(0));
+        break;
+    case 2://本周
+        model->setFilter(state1 + " and " + state2.arg(7));
+        break;
+    case 3://本月
+        model->setFilter(state1 + " and " + state2.arg(30));
+        break;
+    }
+
     model->setEditStrategy(QSqlTableModel::OnManualSubmit);
     model->select();
     model->setHeaderData(0, Qt::Horizontal, tr("学生"));
@@ -255,4 +269,10 @@ void Teacher::on_delete_2_clicked()
         model->submitAll();
         statusBar()->showMessage(tr("移除成功"),2000);
     }
+}
+
+void Teacher::on_comboBox_currentIndexChanged(int index)
+{
+    if(0) index = 0;
+    updateTableView();
 }

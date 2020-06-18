@@ -25,6 +25,8 @@ private slots:
 
     void after_view_loaded();
 
+    void on_comboBox_currentIndexChanged(int index);
+
 private:
     Ui::Student *ui;
     QSqlDatabase db;
