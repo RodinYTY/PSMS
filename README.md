@@ -22,16 +22,16 @@
 
 ### 老师表
 
-| **属性** | **类型** | **含义**   | **主、外键** | **约束**       |
-| -------- | -------- | ---------- | ------------ | -------------- |
-| TNo      | int      | 老师号     | 主键         | Not Null、自增 |
-| TName    | char(10) | 姓名       |              | Not Null       |
-| TID      | char(18) | 身份证号码 |              | Not Null       |
-| TSex     | char(1)  | 性别       |              | '男' 或 '女'   |
-| TAge     | smallint | 年龄       |              | Not Null       |
-| TPhone   | char(11) | 手机号     |              |                |
-| TMajor   | char(8)  | 专业       |              | Not Null       |
-| UName    | char(20) | 账户名     |              |                |
+| **属性** | **类型** | **含义**   | **主、外键** | **约束**           |
+| -------- | -------- | ---------- | ------------ | ------------------ |
+| TNo      | int      | 老师号     | 主键         | Not Null、自增     |
+| TName    | char(10) | 姓名       |              | Not Null           |
+| TID      | char(18) | 身份证号码 |              | Not Null           |
+| TSex     | char(1)  | 性别       |              | '男' 或 '女'       |
+| TAge     | smallint | 年龄       |              | Not Null           |
+| TPhone   | char(11) | 手机号     |              |                    |
+| TMajor   | char(8)  | 专业       |              | '钢琴', '小提琴'等 |
+| UName    | char(20) | 账户名     |              |                    |
 
 ### 课程表
 

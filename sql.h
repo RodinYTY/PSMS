@@ -68,7 +68,7 @@ public:
                `sno` int NOT NULL AUTO_INCREMENT,\
                `sname` char(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,\
                `sid` char(18) NOT NULL,\
-               `ssex` char(1) NOT NULL,\
+               `ssex` enum(\'男\',\'女\'),\
                `sage` smallint NOT NULL,\
                `sphone` char(11) DEFAULT NULL,\
                `uname` char(20) DEFAULT NULL,\
@@ -79,10 +79,10 @@ public:
                `tno` int NOT NULL AUTO_INCREMENT,\
                `tname` char(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,\
                `tid` char(18) NOT NULL,\
-               `tsex` char(1) NOT NULL,\
+               `tsex` enum(\'男\',\'女\'),\
                `tage` smallint NOT NULL,\
                `tphone` char(11) DEFAULT NULL,\
-               `tmajor` char(8) DEFAULT NULL,\
+               `tmajor` enum(\'钢琴\',\'小提琴\',\'吉他\',\'鼓\',\'贝斯\',\'古筝\',\'尤克里里\'),\
                `uname` char(20) DEFAULT NULL,\
                PRIMARY KEY (`tno`)\
              );\
