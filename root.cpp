@@ -20,6 +20,7 @@ Root::Root(QWidget *parent) :
     QTimer::singleShot(100, this, SLOT(after_view_loaded())); //页面加载后
 
     connect(ui->gohome, SIGNAL(triggered()), this, SLOT(gohome()));
+    connect(ui->changepwd, SIGNAL(triggered()), this, SLOT(changepwd()));
 
 }
 
@@ -659,4 +660,34 @@ void Root::on_search_course_clicked()
 void Root::gohome(){
     emit windowsClosed();
     this->close();
+}
+
+void Root::changepwd(){
+    bool ok;
+    QString rootpwd = QInputDialog::getText(this, "更改MySQL密码","请输入新的密码", QLineEdit::Password, "", &ok);
+    if(rootpwd.isEmpty()){
+        QMessageBox::critical(this,"","输入框为空，更改失败！");
+        return;
+    }
+    if(ok == false){
+        return;
+    }
+    QFile file(".rootpwd");
+    if(!file.open(QIODevice::ReadWrite | QFile::Truncate)){
+        qDebug() << "root密码配置文件打开失败";
+        QMessageBox::critical(this,"错误","root密码配置文件打开失败");
+        return;
+    }
+    //加密
+    int i = 89;
+    QString encryption;
+    for(auto c:rootpwd){
+        char x = c.unicode() + (i += 2);
+        encryption.append(x);
+    }
+    file.write(encryption.toUtf8());
+    file.close();
+    QMessageBox msgBox;
+    msgBox.setText("更改成功，需要重启程序以生效");
+    msgBox.exec();
 }

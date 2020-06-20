@@ -36,6 +36,7 @@ void SignUp::after_view_loaded(){
         db.close();
         QSqlDatabase::removeDatabase("QMYSQL");
         msgBox.setText("数据库连接失败，请检查数据库配置！");
+        msgBox.setIcon(QMessageBox::Critical);
         msgBox.exec();
         return;
     }

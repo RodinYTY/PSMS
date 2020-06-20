@@ -314,16 +314,11 @@ border: 0px transparent;</string>
     </item>
    </layout>
   </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>547</width>
-     <height>22</height>
-    </rect>
+  <action name="changepwd">
+   <property name="text">
+    <string>更改root密码</string>
    </property>
-  </widget>
+  </action>
  </widget>
  <resources/>
  <connections/>

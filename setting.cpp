@@ -23,10 +23,7 @@ void Setting::on_buttonBox_accepted()
 {
     QMessageBox msgBox;
     if(ui->dbname->text().isEmpty() && ui->linkname->text().isEmpty() && ui->port->text().isEmpty()){
-        msgBox.setIcon(QMessageBox::Critical);
-        msgBox.setText("输入框不能为空！");
-        msgBox.addButton("确定", QMessageBox::AcceptRole);
-        msgBox.exec();
+        QMessageBox::critical(this,"","输入框为空，更改失败！");
         return;
     }
     if(!ui->port->text().isEmpty() && !ui->port->text().contains(QRegExp("^\\d+$"))){

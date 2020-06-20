@@ -21,6 +21,7 @@ public:
     ~SignUp();
     void setDBLink(QSqlDatabase);
     void setConfig(const struct SQL::Configuration);
+    SQL sql;
 
 private slots:
     void on_role_currentIndexChanged(int index);
@@ -39,7 +40,6 @@ protected:
 private:
     Ui::SignUp *ui;
     QSqlDatabase db;
-    SQL sql;
     void setConstraints();
     struct SQL::Configuration config;
     void link_database(QSqlDatabase &);

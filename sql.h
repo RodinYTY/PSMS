@@ -61,7 +61,7 @@ public:
 
     /*-------------------------*/
 
-    const QString rootpwd = "yty02036054866";
+    QString rootpwd;
 
     //建表
     QString createTables = "CREATE TABLE IF NOT EXISTS `student`(\

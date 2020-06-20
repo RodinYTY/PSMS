@@ -1025,6 +1025,7 @@
      <string>数据库</string>
     </property>
     <addaction name="gohome"/>
+    <addaction name="changepwd"/>
    </widget>
    <addaction name="menu"/>
   </widget>
@@ -1037,6 +1038,11 @@
   <action name="gohome">
    <property name="text">
     <string>🏚</string>
+   </property>
+  </action>
+  <action name="changepwd">
+   <property name="text">
+    <string>更改root密码</string>
    </property>
   </action>
  </widget>

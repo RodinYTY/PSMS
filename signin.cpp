@@ -5,7 +5,54 @@ SignIn::SignIn(QWidget *parent)
     , ui(new Ui::SignIn)
 {
     ui->setupUi(this);
+    //读取root密码
+    QFileInfo path(".rootpwd");
+    if(path.exists()==false){//配置文件不存在则需初始化
+        qDebug() << "root密码配置文件不存在";
+        bool ok;
+        while(sql.rootpwd.isEmpty()){
+            sql.rootpwd = QInputDialog::getText(this, "初始化系统","请输入MySQL的root账号密码", QLineEdit::Password, "", &ok);
+            if(ok == false){
+                exit(0);
+            }
+        }
+        QFile file(".rootpwd");
+        if(!file.open(QIODevice::WriteOnly | QFile::Truncate)){
+            qDebug() << "root密码配置文件打开失败";
+            QMessageBox::critical(this,"错误",file.fileName() + "打开失败");
+            exit(-1);
+        }
+        //加密
+        int i = 89;
+        QString encryption;
+        for(auto c:sql.rootpwd){
+            char x = c.unicode() + (i += 2);
+            encryption.append(x);
+        }
+        file.write(encryption.toUtf8());
+        file.close();
+    }
+    else{
+        QFile file(".rootpwd");
+        if(!file.open(QIODevice::ReadOnly)){
+            qDebug() << "配置文件打开失败";
+            QMessageBox::critical(this,"错误",file.fileName() + "打开失败");
+            exit(-1);
+        }
+        QTextStream in(&file);
+        QString origin = in.readLine();
+        //解密
+        int i = 89;
+        QString deciphering;
+        for(auto c:origin){
+            char x = c.unicode() - (i += 2);
+            deciphering.append(x);
+        }
+        sql.rootpwd = deciphering;
+        file.close();
+    }
     QTimer::singleShot(100, this, SLOT(after_view_loaded())); //页面加载后
+
 }
 
 void SignIn::after_view_loaded(){
@@ -66,55 +113,46 @@ void SignIn::on_signin_clicked()//登录
         msgBox.exec();
         return;
     }
-    int ret = link_database(db);
     //管理员账号
     if(ui->usrname->text().toLower() == "root"){
-        if(ui->pwd->text() != sql.rootpwd){
-            msgBox.setText("root的密码不正确！");
-            ui->auto_2->setChecked(false);
-            ui->pwd->clear();
+        int ret = link_database(db);
+        switch(ret){
+        case -1:
+            msgBox.setText("连接MySQL(root)失败！");
             msgBox.exec();
-
-        }
-        else{
-            //密码正确
-            switch(ret){
-            case -1:
-                msgBox.setText("连接MySQL(root)失败！");
-                msgBox.exec();
-                ui->auto_2->setChecked(false);
-                return;
-            case 0:
-                msgBox.setText("创建数据库失败！");
-                msgBox.exec();
-                ui->auto_2->setChecked(false);
-                return;
-            case 1:
-                if(ui->auto_2->isChecked())
-                    config._auto = 1;
-                else
-                    config._auto = 0;
-                if(ui->rem->isChecked()){
-                    config._rem = 1;
-                    save_to_config(config._dbname, config._linkname, config._port, ui->usrname->text(), ui->pwd->text(), config._rem, config._auto);
-                }
-                else{
-                    config._rem = 0;
-                    save_to_config(config._dbname, config._linkname, config._port, ui->usrname->text(), "x", config._rem, config._auto);
-                }
-                r = new Root();
-                r->setWindowTitle("琴行管理系统[root]");
-                //将root和config连接传递过去
-                r->setDBLink(db);
-                r->setConfig(config);
-                connect(r, SIGNAL(windowsClosed()), this, SLOT(redisplay()));
-                this->hide();
-                r->show();
+            ui->auto_2->setChecked(false);
+            return;
+        case 0:
+            msgBox.setText("创建数据库失败！");
+            msgBox.exec();
+            ui->auto_2->setChecked(false);
+            return;
+        case 1:
+            if(ui->auto_2->isChecked())
+                config._auto = 1;
+            else
+                config._auto = 0;
+            if(ui->rem->isChecked()){
+                config._rem = 1;
+                save_to_config(config._dbname, config._linkname, config._port, ui->usrname->text(), ui->pwd->text(), config._rem, config._auto);
             }
+            else{
+                config._rem = 0;
+                save_to_config(config._dbname, config._linkname, config._port, ui->usrname->text(), "x", config._rem, config._auto);
+            }
+            r = new Root();
+            r->setWindowTitle("琴行管理系统[root]");
+            //将root和config连接传递过去
+            r->setDBLink(db);
+            r->setConfig(config);
+            connect(r, SIGNAL(windowsClosed()), this, SLOT(redisplay()));
+            this->hide();
+            r->show();
         }
     }
     //非root账号
     else{
+        link_database(db);
         QSqlDatabase db1;
         if(!db.open()){
             msgBox.setText("数据库连接断开！");
@@ -298,6 +336,7 @@ void SignIn::on_signup_clicked()//注册
     u = new SignUp();
     u->setWindowTitle("注册窗口");
     u->setConfig(config);//传递连接参数
+    u->sql.rootpwd = sql.rootpwd;
     u->show();
 }
 
@@ -331,29 +370,78 @@ void SignIn::on_auto_2_clicked(bool checked)//自动登录
 
 QStringList SignIn::load_from_config(){
     QStringList strList;
-    QFileInfo path("config");
+    QFileInfo path(".config");
     if(path.exists()==false){
         qDebug() << "配置文件不存在";
         return strList;
     }
-    QFile file("config");
-    if(!file.open(QIODevice::ReadWrite | QIODevice::Text)){
+    QFile file(".config");
+    if(!file.open(QIODevice::ReadWrite)){
         qDebug() << "配置文件打开失败";
         return strList;
     }
     QTextStream in(&file);
     strList =  in.readLine().split(" ");
+    //解密usrname
+    QString usrname, pwd;
+    int i = 99;
+
+    if(strList[3] != "x"){
+        qDebug() << "解码usrname";
+        for(auto c:strList[3]){
+            char x = c.unicode() - i++;
+            usrname.append(x);
+        }
+        qDebug() << usrname;
+        strList[3] = usrname;
+    }
+    //解密pwd
+    if(strList[4] != 'x'){
+        qDebug() << "解码pwd";
+        for(auto c:strList[4]){
+            char x = c.unicode() + i++;
+            pwd.append(x);
+        }
+        qDebug() << pwd;
+        strList[4] = pwd;
+    }
     return strList;
 }
 
 void SignIn::save_to_config(QString _dbname, QString _linkname, QString _port, QString _usrname, QString _pwd, int _rem,int _auto){
     QString in = "%1 %2 %3 %4 %5 %6 %7";
-    QFile file("config");
-    if(!file.open(QIODevice::ReadWrite | QIODevice::Text | QFile::Truncate)){
-        qDebug() << "配置文件不存在";
+    QFile file(".config");
+    if(!file.open(QIODevice::ReadWrite | QFile::Truncate)){
+        qDebug() << "配置文件打开失败";
         return;
     }
-    in = in.arg(_dbname, _linkname, _port, _usrname, _pwd, QString::number(_rem), QString::number(_auto)).toUtf8();
+    QString usrname, pwd;
+    int i = 99;
+    if(_usrname == "x")
+        usrname = "x";
+    else{
+        //加密usrname
+        qDebug() << "usrname加密前后";
+        qDebug() << _usrname;
+        for(auto c:_usrname){
+            char x = c.unicode() + i++;
+            usrname.append(x);
+        }
+        qDebug() << usrname;
+    }
+    if(_pwd == "x")
+        pwd = "x";
+    else{
+        //加密pwd
+        qDebug() << "pwd加密前后";
+        qDebug() << _pwd;
+        for(auto c:_pwd){
+            char x = c.unicode() - i++;
+            pwd.append(x);
+        }
+        qDebug() << pwd;
+    }
+    in = in.arg(_dbname, _linkname, _port, usrname, pwd, QString::number(_rem), QString::number(_auto)).toUtf8();
     qDebug() << "已存储配置到本地：";
     qDebug() << in;
     file.write(in.toUtf8());

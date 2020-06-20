@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QSqlRecord>
+#include <QFile>
 #include <sql.h>
 
 namespace Ui {
@@ -75,6 +76,8 @@ private slots:
     void on_search_course_clicked();
 
     void gohome();
+
+    void changepwd();
 
 private:
     SQL sql;
