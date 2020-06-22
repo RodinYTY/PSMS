@@ -6,8 +6,9 @@ SignIn::SignIn(QWidget *parent)
 {
     ui->setupUi(this);
     //读取root密码
-    QFileInfo path(".rootpwd");
-    if(path.exists()==false){//配置文件不存在则需初始化
+    QString proj_dir = QCoreApplication::applicationDirPath();
+    QFileInfo filepath(proj_dir + "/rootpwd.psmsc");
+    if(filepath.isFile()==false){//配置文件不存在则需初始化
         qDebug() << "root密码配置文件不存在";
         bool ok;
         while(sql.rootpwd.isEmpty()){
@@ -16,10 +17,10 @@ SignIn::SignIn(QWidget *parent)
                 exit(0);
             }
         }
-        QFile file(".rootpwd");
-        if(!file.open(QIODevice::WriteOnly | QFile::Truncate)){
-            qDebug() << "root密码配置文件打开失败";
-            QMessageBox::critical(this,"错误",file.fileName() + "打开失败");
+        QFile file(proj_dir + "/rootpwd.psmsc");
+        if(!file.open(QIODevice::WriteOnly | QIODevice::Text | QFile::Truncate)){
+            qDebug() << "root密码配置文件写入失败";
+            QMessageBox::critical(this,"错误",file.fileName() + ": " +file.errorString());
             exit(-1);
         }
         //加密
@@ -33,9 +34,10 @@ SignIn::SignIn(QWidget *parent)
         file.close();
     }
     else{
-        QFile file(".rootpwd");
-        if(!file.open(QIODevice::ReadOnly)){
+        QFile file(proj_dir + "/rootpwd.psmsc");
+        if(!file.open(QIODevice::ReadWrite)){
             qDebug() << "配置文件打开失败";
+            qDebug() << file.error();
             QMessageBox::critical(this,"错误",file.fileName() + "打开失败");
             exit(-1);
         }
@@ -369,15 +371,17 @@ void SignIn::on_auto_2_clicked(bool checked)//自动登录
 }
 
 QStringList SignIn::load_from_config(){
+    QString proj_dir = QCoreApplication::applicationDirPath();
     QStringList strList;
-    QFileInfo path(".config");
+    QFileInfo path(proj_dir + "/config.psmsc");
     if(path.exists()==false){
         qDebug() << "配置文件不存在";
         return strList;
     }
-    QFile file(".config");
-    if(!file.open(QIODevice::ReadWrite)){
+    QFile file(proj_dir + "/config.psmsc");
+    if(!file.open(QIODevice::ReadWrite | QIODevice::Text)){
         qDebug() << "配置文件打开失败";
+        qDebug() << file.errorString();
         return strList;
     }
     QTextStream in(&file);
@@ -410,8 +414,9 @@ QStringList SignIn::load_from_config(){
 
 void SignIn::save_to_config(QString _dbname, QString _linkname, QString _port, QString _usrname, QString _pwd, int _rem,int _auto){
     QString in = "%1 %2 %3 %4 %5 %6 %7";
-    QFile file(".config");
-    if(!file.open(QIODevice::ReadWrite | QFile::Truncate)){
+    QString proj_dir = QCoreApplication::applicationDirPath();
+    QFile file(proj_dir + "/config.psmsc");
+    if(!file.open(QIODevice::ReadWrite | QIODevice::Text | QFile::Truncate)){
         qDebug() << "配置文件打开失败";
         return;
     }
