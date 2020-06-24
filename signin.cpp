@@ -192,7 +192,8 @@ void SignIn::on_signin_clicked()//登录
                 qDebug() << "学生号";
                 /*----------------*/
                 stu = new Student();
-                stu->setDBLinkandUname(db, ui->usrname->text());
+                link_database(db1, ui->usrname->text(), ui->pwd->text());
+                stu->setDBLinkandUname(db1, ui->usrname->text());
                 stu->setConfig(config);
                 stu->setWindowTitle("琴行管理系统[学生]");
                 connect(stu, SIGNAL(windowsClosed()), this, SLOT(redisplay()));
@@ -236,7 +237,8 @@ void SignIn::on_signin_clicked()//登录
                 qDebug() << "老师号";
                 /*----------------*/
                 t = new Teacher();
-                t->setDBLinkandUname(db, ui->usrname->text());
+                link_database(db1, ui->usrname->text(), ui->pwd->text());
+                t->setDBLinkandUname(db1, ui->usrname->text());
                 t->setConfig(config);
                 t->setWindowTitle("琴行管理系统[教师]");
                 connect(t, SIGNAL(windowsClosed()), this, SLOT(redisplay()));
@@ -302,8 +304,6 @@ int SignIn::link_database(QSqlDatabase &db){
     //使用表
     query = "USE " + config._dbname;
     db.exec(query);
-    //创建角色
-    db.exec(sql.createRoles);
     //插入触发器，插入学生自动删除过期邀请码
     db.exec(sql.createTrigger);
     return 1;

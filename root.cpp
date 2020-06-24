@@ -122,6 +122,7 @@ void Root::load_tables_to_tv(){
     model_t->setTable("teacher");
     model_t->setEditStrategy(QSqlTableModel::OnManualSubmit);
     model_t->select();
+    model_t->setHeaderData(0, Qt::Horizontal, tr("老师号"));
     model_t->setHeaderData(1, Qt::Horizontal, tr("姓名"));
     model_t->setHeaderData(2, Qt::Horizontal, tr("身份证号"));
     model_t->setHeaderData(3, Qt::Horizontal, tr("性别"));
@@ -156,13 +157,13 @@ void Root::load_tables_to_tv(){
         }
     }
     ui->tv_teacher->setModel(model_t);
-    ui->tv_teacher->hideColumn(0);
 
     /*----------------学生----------------*/
     model_s = new QSqlTableModel(this, db);
     model_s->setTable("student");
     model_s->setEditStrategy(QSqlTableModel::OnManualSubmit);
     model_s->select();
+    model_s->setHeaderData(0, Qt::Horizontal, tr("学生号"));
     model_s->setHeaderData(1, Qt::Horizontal, tr("姓名"));
     model_s->setHeaderData(2, Qt::Horizontal, tr("身份证号"));
     model_s->setHeaderData(3, Qt::Horizontal, tr("性别"));
@@ -196,7 +197,6 @@ void Root::load_tables_to_tv(){
         }
     }
     ui->tv_student->setModel(model_s);
-    ui->tv_student->hideColumn(0);
 }
 
 Root::~Root()

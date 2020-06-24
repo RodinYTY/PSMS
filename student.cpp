@@ -201,7 +201,7 @@ void Student::updateTableView(){
     model->setEditStrategy(QSqlTableModel::OnManualSubmit);
     model->select();
     model->setHeaderData(1, Qt::Horizontal, tr("老师"));
-    model->setHeaderData(2, Qt::Horizontal, tr("房号"));
+    model->setHeaderData(2, Qt::Horizontal, tr("琴房号"));
     model->setHeaderData(3, Qt::Horizontal, tr("上课时间"));
     model->setHeaderData(4, Qt::Horizontal, tr("下课时间"));
 

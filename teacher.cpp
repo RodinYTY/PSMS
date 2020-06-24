@@ -111,7 +111,8 @@ void Teacher::updateInfo(){
                    FROM\
                        course\
                    WHERE\
-                       tno IN ( SELECT tno FROM teacher WHERE uname = \'%1\' );").arg(usrname));
+                       MONTH ( stime ) = MONTH ( now( ) ) \
+                       AND tno IN ( SELECT tno FROM teacher WHERE uname = \'%1\' );").arg(usrname));
     query.next();
     ui->num2->setText(query.value(0).toString());
 
@@ -246,7 +247,7 @@ void Teacher::updateTableView(){
     model->setEditStrategy(QSqlTableModel::OnManualSubmit);
     model->select();
     model->setHeaderData(0, Qt::Horizontal, tr("学生"));
-    model->setHeaderData(2, Qt::Horizontal, tr("房号"));
+    model->setHeaderData(2, Qt::Horizontal, tr("琴房号"));
     model->setHeaderData(3, Qt::Horizontal, tr("上课时间"));
     model->setHeaderData(4, Qt::Horizontal, tr("下课时间"));
 

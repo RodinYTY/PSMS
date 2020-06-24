@@ -389,7 +389,7 @@
   <widget class="QStatusBar" name="statusbar"/>
   <action name="gohome">
    <property name="text">
-    <string>🏚</string>
+    <string>注销账号</string>
    </property>
   </action>
  </widget>

@@ -108,6 +108,9 @@
             <property name="text">
              <string>✔</string>
             </property>
+            <property name="shortcut">
+             <string>Backspace</string>
+            </property>
            </widget>
           </item>
          </layout>
@@ -538,7 +541,7 @@
   <widget class="QStatusBar" name="statusbar"/>
   <action name="gohome">
    <property name="text">
-    <string>🏚</string>
+    <string>注销账号</string>
    </property>
   </action>
  </widget>

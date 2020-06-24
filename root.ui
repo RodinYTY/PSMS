@@ -464,6 +464,9 @@
               <property name="text">
                <string>➕</string>
               </property>
+              <property name="shortcut">
+               <string>Ctrl+A</string>
+              </property>
              </widget>
             </item>
             <item>
@@ -476,6 +479,9 @@
               </property>
               <property name="text">
                <string>➖</string>
+              </property>
+              <property name="shortcut">
+               <string>Backspace</string>
               </property>
              </widget>
             </item>
@@ -620,6 +626,9 @@
               </property>
               <property name="text">
                <string>➖</string>
+              </property>
+              <property name="shortcut">
+               <string>Backspace</string>
               </property>
              </widget>
             </item>
@@ -781,6 +790,9 @@
               <property name="text">
                <string>➖</string>
               </property>
+              <property name="shortcut">
+               <string>Backspace</string>
+              </property>
              </widget>
             </item>
             <item>
@@ -933,6 +945,9 @@
               <property name="text">
                <string>➕</string>
               </property>
+              <property name="shortcut">
+               <string>Ctrl+A</string>
+              </property>
              </widget>
             </item>
             <item>
@@ -945,6 +960,9 @@
               </property>
               <property name="text">
                <string>➖</string>
+              </property>
+              <property name="shortcut">
+               <string>Backspace</string>
               </property>
              </widget>
             </item>
@@ -1037,7 +1055,7 @@
   </action>
   <action name="gohome">
    <property name="text">
-    <string>🏚</string>
+    <string>注销账号</string>
    </property>
   </action>
   <action name="changepwd">

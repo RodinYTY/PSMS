@@ -211,6 +211,9 @@ void SignUp::on_signup_clicked()//注册
             state = sql.createUser.arg(info.usrname, config._linkname, info.pwd);
             state += sql.teacherGranting.arg(info.usrname, config._linkname);
             db.exec(state);
+
+//            qDebug() << state;
+            qDebug() << db.lastError().text();
             if (db.lastError().isValid())
             {
                 qDebug() <<db.lastError();
@@ -308,6 +311,16 @@ void SignUp::on_pwd1_editingFinished()
     if(ui->pwd->text() != ui->pwd1->text()){
         msgBox.setText("两次输入的密码不一致！");
         ui->pwd1->clear();
+        msgBox.exec();
+    }
+}
+
+void SignUp::on_usrname_editingFinished()
+{
+    QMessageBox msgBox;
+    if(ui->usrname->text().toLower() == "root"){
+        msgBox.setText("root是管理员账户名！");
+        ui->usrname->clear();
         msgBox.exec();
     }
 }

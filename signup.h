@@ -34,6 +34,8 @@ private slots:
 
     void after_view_loaded();
 
+    void on_usrname_editingFinished();
+
 protected:
     void closeEvent(QCloseEvent *event);
 

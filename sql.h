@@ -136,59 +136,48 @@ public:
              END;";
 
     //创建学生和老师角色
-    QString createRoles = "CREATE role teachers;\
-            GRANT SELECT, UPDATE ON TABLE\
-                course TO teachers;\
-            GRANT SELECT ON TABLE\
-                student TO teachers;\
-            GRANT SELECT ON TABLE\
-                teacher TO teachers;\
-            GRANT SELECT ON TABLE\
-                room TO teachers;\
-            CREATE role students;\
-            GRANT SELECT ON TABLE\
-                course TO students;\
-            GRANT SELECT, UPDATE ON TABLE\
-                student TO students;\
-            GRANT SELECT ON TABLE\
-                teacher TO students;\
-            GRANT SELECT ON TABLE\
-                room TO students;";
+    QString teacherGranting = "GRANT ALL PRIVILEGES ON TABLE course TO %1@%2;\
+            GRANT SELECT ON TABLE student TO %1@%2;\
+            GRANT SELECT, UPDATE ON TABLE teacher TO %1@%2;\
+            GRANT SELECT ON TABLE room TO %1@%2;";
 
-    //创建用户
-    QString createUser = "create user %1@%2 identified by \'%3\';";
-    QString studentGranting = "grant students to %1@%2;";
-    QString teacherGranting = "grant teachers to %1@%2;";
+    QString studentGranting = "GRANT SELECT ON TABLE course TO %1@%2;\
+            GRANT SELECT, UPDATE ON TABLE student TO %1@%2;\
+            GRANT SELECT ON TABLE teacher TO %1@%2;\
+            GRANT SELECT ON TABLE room TO %1@%2;";
 
-    //学生：姓名 身份证 性别 年龄 手机号 账户名
-    QString createTrigger = "CREATE TRIGGER insert_student AFTER INSERT ON `student` FOR EACH ROW\
-            BEGIN\
-                DELETE FROM CODE \
-                WHERE\
-                    datediff( now( ), genDate ) > 7;\
-            END;";
+//创建用户
+QString createUser = "create user %1@%2 identified by \'%3\';";
 
-    //带主码
-    QString insertIntoStudentWithIndex = "insert into student\
-            values(%1, \'%2\', \'%3\', \'%4\', %5, \'%6\', \'%7\');";
-    QString insertIntoTeacherWithIndex = "insert into teacher\
-            values(%1, \'%2\', \'%3\', \'%4\', %5, \'%6\', \'%7\', \'%8\');";
+//学生：姓名 身份证 性别 年龄 手机号 账户名
+QString createTrigger = "CREATE TRIGGER insert_student AFTER INSERT ON `student` FOR EACH ROW\
+        BEGIN\
+            DELETE FROM CODE \
+            WHERE\
+                datediff( now( ), genDate ) > 7;\
+        END;";
 
-    //清除7天前的邀请码
-    QString clearCodes = "DELETE FROM CODE WHERE datediff( now( ), genDate ) > 7;";
-    //查询邀请码
-    QString selectCodeOf = "select count(*) from code where icode = \'%1\';";
-    //删除邀请码
-    QString delectCodeOf = "delete from code where icode = \'%1\';";
-    //插入邀请码
-    QString insertCodeOf = "insert into code values (\'%1\', now());";
+//带主码
+QString insertIntoStudentWithIndex = "insert into student\
+        values(%1, \'%2\', \'%3\', \'%4\', %5, \'%6\', \'%7\');";
+QString insertIntoTeacherWithIndex = "insert into teacher\
+        values(%1, \'%2\', \'%3\', \'%4\', %5, \'%6\', \'%7\', \'%8\');";
 
-    //查找账户名
-    QString acountInStudent = "select count(*) from student where uname=\'%1\';";
-    QString acountInTeacher = "select count(*) from teacher where uname=\'%1\';";
+//清除7天前的邀请码
+QString clearCodes = "DELETE FROM CODE WHERE datediff( now( ), genDate ) > 7;";
+//查询邀请码
+QString selectCodeOf = "select count(*) from code where icode = \'%1\';";
+//删除邀请码
+QString delectCodeOf = "delete from code where icode = \'%1\';";
+//插入邀请码
+QString insertCodeOf = "insert into code values (\'%1\', now());";
 
-    QString searchTeacher = "tno = %1 or tno in (select tno from teacher where tid like \'%%1%\' or tphone like \'%%1%\' or uname like \'%%1%\')";
-    QString searchStudent = "sno = %1 or sno in (select sno from student where sid like \'%%1%\' or sphone like \'%%1%\' or uname like \'%%1%\')";
+//查找账户名
+QString acountInStudent = "select count(*) from student where uname=\'%1\';";
+QString acountInTeacher = "select count(*) from teacher where uname=\'%1\';";
+
+QString searchTeacher = "tno = %1 or tno in (select tno from teacher where tid like \'%%1%\' or tphone like \'%%1%\' or uname like \'%%1%\')";
+QString searchStudent = "sno = %1 or sno in (select sno from student where sid like \'%%1%\' or sphone like \'%%1%\' or uname like \'%%1%\')";
 
 
 
